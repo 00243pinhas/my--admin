@@ -1,0 +1,77 @@
+/* Dashboard container */
+.dashboard-container {
+  padding: 40px;
+  font-family: "Inter", sans-serif;
+  color: #222;
+}
+
+/* Title */
+.dashboard-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+/* Stats section (grid layout) */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  text-align: center;
+  transition: transform 0.2s ease-in-out;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+}
+
+.stat-number {
+  font-size: 36px;
+  color: #2563eb; /* Blue */
+  margin: 0;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #555;
+}
+
+/* Section Title */
+.dashboard-section {
+  margin-top: 40px;
+}
+
+.section-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* Activity Cards */
+.activity-card {
+  background: #f9fafb;
+  padding: 18px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  border-left: 4px solid #2563eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.activity-card p {
+  margin: 0;
+}
+
+.time {
+  color: #777;
+  font-size: 12px;
+}
