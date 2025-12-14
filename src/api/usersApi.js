@@ -36,3 +36,16 @@ export async function deleteUser(token, userId) {
   });
   return res.data;
 }
+
+export async function fetchUserListings(token, userId) {
+  const response = await axios.get(
+    `${API_BASE}/users/${userId}/listings`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data.data;
+}

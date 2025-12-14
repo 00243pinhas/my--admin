@@ -23,8 +23,8 @@ export default function UserListingsPage() {
       setLoading(true);
       setError("");
       const data = await fetchUserListings(token, userId);
+      console.log(data)
 
-      // backend returns { listings: [...] }
       setListings(data.listings || []);
     } catch (err) {
       console.error(err);
