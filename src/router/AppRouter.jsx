@@ -5,6 +5,8 @@ import Dashboard from "../pages/Dashboard";
 import ListingsPage from "../pages/ListingsPage";
 import UsersPage from "../pages/UsersPage";
 import ProtectedRoute from "../auth/ProtectedRoute";
+import ListingFilesPage from "../pages/ListingFilesPage";
+import UserListingsPage from "../pages/UserListingsPage";
 
 export default function AppRouter() {
   return (
@@ -45,6 +47,26 @@ export default function AppRouter() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+            path="/admin/listings/:id/files"
+            element={
+              <ProtectedRoute>
+                <ListingFilesPage />
+              </ProtectedRoute>
+            }
+        />
+
+
+        <Route
+          path="/users/:userId/listings"
+          element={
+            <ProtectedRoute>
+              <UserListingsPage />
+            </ProtectedRoute>
+          }
+        />
+
 
       </Routes>
     </BrowserRouter>

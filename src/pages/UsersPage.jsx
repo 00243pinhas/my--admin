@@ -1,6 +1,10 @@
 // src/pages/UsersPage.jsx
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/useAuth";
+import { useNavigate } from "react-router-dom";
+
+
+
 import {
   fetchAllUsers,
   updateUserRole,
@@ -15,10 +19,28 @@ import {
 
 export default function UsersPage() {
   const { token } = useAuth();
+    const navigate = useNavigate();
+  
+
+
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+    const currentUserId = currentUser?.id;
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const [roleFilter, setRoleFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+
+
+  const filteredUsers = users.filter((u) => {
+  if (roleFilter && u.role !== roleFilter) return false;
+  if (statusFilter && u.account_status !== statusFilter) return false;
+  return true;
+});
+
+
 
   useEffect(() => {
     if (!token) return;
@@ -54,6 +76,9 @@ export default function UsersPage() {
   }
 
   async function handleStatusChange(userId, status) {
+    
+    if (!confirm(`Change status to "${status}"?`)) return;
+
     try {
       await updateUserStatus(token, userId, status);
       setUsers((prev) =>
@@ -86,6 +111,23 @@ export default function UsersPage() {
     <div style={{ padding: "2rem" }}>
       <h1>Users Management</h1>
 
+      <div style={{ marginBottom: "1rem" }}>
+        <select onChange={(e) => setRoleFilter(e.target.value)}>
+          <option value="">All roles</option>
+          {USER_ROLE_OPTIONS.map((r) => (
+            <option key={r} value={r}>{r}</option>
+          ))}
+        </select>
+
+        <select onChange={(e) => setStatusFilter(e.target.value)}>
+          <option value="">All statuses</option>
+          {USER_ACCOUNT_STATUS_OPTIONS.map((s) => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
+      </div>
+
+
       <table border="1" cellPadding="8" cellSpacing="0" width="100%">
         <thead>
           <tr>
@@ -99,7 +141,7 @@ export default function UsersPage() {
         </thead>
 
         <tbody>
-          {users.map((u) => (
+          {filteredUsers.map((u) => (
             <tr key={u.id}>
               <td>
                 {u.first_name} {u.last_name}
@@ -109,18 +151,17 @@ export default function UsersPage() {
 
               {/* ROLE */}
               <td>
-                <select
-                  value={u.role}
-                  onChange={(e) =>
-                    handleRoleChange(u.id, e.target.value)
-                  }
-                >
-                  {USER_ROLE_OPTIONS.map((role) => (
-                    <option key={role} value={role}>
-                      {role.replace("_", " ")}
-                    </option>
-                  ))}
-                </select>
+                  <select
+                    value={u.role}
+                    disabled={u.id === currentUserId}
+                    onChange={(e) => handleRoleChange(u.id, e.target.value)}
+                  >
+                    {USER_ROLE_OPTIONS.map((r) => (
+                      <option key={r} value={r}>
+                        {r}
+                      </option>
+                    ))}
+                  </select>
               </td>
 
               {/* STATUS */}
@@ -147,11 +188,18 @@ export default function UsersPage() {
 
               <td>
                 <button
-                  style={{ color: "red" }}
+                  disabled={u.id === currentUserId}
                   onClick={() => handleDelete(u.id)}
                 >
                   Delete
                 </button>
+
+                <button onClick={() =>
+                   navigate(`/users/${u.id}/listings`)}>
+                      View Listings
+                </button>
+
+
               </td>
             </tr>
           ))}

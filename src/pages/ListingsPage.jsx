@@ -1,6 +1,7 @@
 // src/pages/ListingsPage.jsx
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/useAuth";
+
 import {
   fetchAllListings,
   updateListingStatus,
@@ -26,10 +27,8 @@ export default function ListingsPage() {
       setLoading(true);
       setError("");
 
-      // ⬇️ FIX 1: pass statusFilter directly (string)
       const data = await fetchAllListings(token, statusFilter);
 
-      // ⬇️ FIX 2: backend returns { listings: [...] }
       const items = Array.isArray(data)
         ? data
         : data?.listings || [];
@@ -45,7 +44,6 @@ export default function ListingsPage() {
 
   async function handleChangeStatus(id, newStatus) {
     try {
-      // ⬇️ FIX 3: correct argument order & payload
       await updateListingStatus(id, { status: newStatus }, token);
 
       setListings((prev) =>

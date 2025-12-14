@@ -3,6 +3,9 @@ import "./dashboard.css";
 import {  useEffect, useState } from "react";
 import { useAuth } from "../auth/useAuth";
 import {fetchBasicDashboardStats} from "../api/dashboardApi";
+import { useNavigate } from "react-router-dom";
+
+
 
 
 
@@ -31,7 +34,6 @@ const [stats, setStats] = useState({
         setLoading(true);
         setError("");
         const data = await fetchBasicDashboardStats(token);
-        console.log(data);
         setStats(data);
 
       } catch (err) {
@@ -68,12 +70,32 @@ const [stats, setStats] = useState({
       <h1 className="dashboard-title">Dilli Admin Dashboard</h1>
 
       <div className="stats-grid">
-        <StatCard number={stats.totalListings} label="Total Listings" />
-        <StatCard number={stats.totalUsers} label="Total Users" />
 
-        {/* placeholders for future: */}
-        <StatCard number={stats.pendingListings} label="Pending Approvals" />
-        <StatCard number={stats.rejectedListings} label="Rejected Listings" />
+          <StatCard
+            number={stats.totalListings}
+            label="Total Listings"
+            to="/dashboard/listings"
+          />
+
+         <StatCard
+          number={stats.totalUsers}
+          label="Total Users"
+          to="/dashboard/users"
+          />
+
+
+
+          <StatCard
+            number={stats.pendingListings}
+            label="Pending Listings"
+            to="/dashboard/listings?status=pending"
+          />
+
+          <StatCard
+            number={stats.rejectedListings}
+            label="Rejected Listings"
+            to="/dashboard/listings?status=rejected"
+          />
 
       </div>
 
@@ -84,12 +106,21 @@ const [stats, setStats] = useState({
     </div>
     );
 
-    function StatCard({ number, label }) {
-    return (
-      <div className="stat-card">
-        <div className="stat-number">{number}</div>
-        <div className="stat-label">{label}</div>
-      </div>
-    );
-  }
+
+}
+
+
+function StatCard({ number, label, to }) {
+  const navigate = useNavigate();
+
+  return (
+    <div
+      className="stat-card clickable"
+      onClick={() => to && navigate(to)}
+      style={{ cursor: to ? "pointer" : "default" }}
+    >
+      <div className="stat-number">{number}</div>
+      <div className="stat-label">{label}</div>
+    </div>
+  );
 }
