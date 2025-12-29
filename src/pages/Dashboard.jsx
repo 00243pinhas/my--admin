@@ -1,126 +1,66 @@
-// src/pages/Dashboard.jsx
-import "./dashboard.css";
-import {  useEffect, useState } from "react";
+// src/pages/Dashboard/Dashboard.jsx
+import { useEffect, useState } from "react";
 import { useAuth } from "../auth/useAuth";
-import {fetchBasicDashboardStats} from "../api/dashboardApi";
-import { useNavigate } from "react-router-dom";
+import { fetchDashboardData } from "../api/dashboard.api";
 
-
-
-
+import DashboardSnapshot from "./Snapshot";
+import DashboardActions from "./ActionRequired";
+import DashboardMomentum from "./Momentum";
+import DashboardActivity from "./RecentActivity";
 
 export default function Dashboard() {
+  const { token } = useAuth();
 
-  const {token} = useAuth();
-
-const [stats, setStats] = useState({
-  totalListings: 0,
-  totalUsers: 0,
-  pendingListings: 0,
-  rejectedListings: 0,
-});
-
-
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-
-
-
   useEffect(() => {
-    async function loadStats() {
-
+    async function loadDashboard() {
       try {
         setLoading(true);
         setError("");
-        const data = await fetchBasicDashboardStats(token);
-        setStats(data);
-
+        const dashboardData = await fetchDashboardData(token);
+        setData(dashboardData);
       } catch (err) {
-        console.error("Dashboard error:", err);
-        setError("Failed to load dashboard stats");
+        setError("Failed to load dashboard");
       } finally {
         setLoading(false);
       }
-
-    }if (token) {
-    loadStats();
     }
-  },[token]);
 
-    if (loading) {
-    return <div className="dashboard-container">Loading dashboard...</div>;
-  }
-
-  if (error) {
-    return <div className="dashboard-container">{error}</div>;
-  }
-
+    if (token) loadDashboard();
+  }, [token]);
 
   if (loading) {
-    return <div className="dashboard-container">Loading...</div>;
+    return (
+      <div className="container mt-5 text-center">
+        Loading dashboard…
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="dashboard-container">Error: {error}</div>;
-  }
-  
-  return (
-    <div className="dashboard-container">
-      <h1 className="dashboard-title">Dilli Admin Dashboard</h1>
-
-      <div className="stats-grid">
-
-          <StatCard
-            number={stats.totalListings}
-            label="Total Listings"
-            to="/dashboard/listings"
-          />
-
-         <StatCard
-          number={stats.totalUsers}
-          label="Total Users"
-          to="/dashboard/users"
-          />
-
-
-
-          <StatCard
-            number={stats.pendingListings}
-            label="Pending Listings"
-            to="/dashboard/listings?status=pending"
-          />
-
-          <StatCard
-            number={stats.rejectedListings}
-            label="Rejected Listings"
-            to="/dashboard/listings?status=rejected"
-          />
-
+    return (
+      <div className="container mt-5">
+        <div className="alert alert-danger">{error}</div>
       </div>
-
-      <div className="dashboard-section">
-        <h2 className="section-title">Recent Activity</h2>
-        <p>We’ll plug real recent activity here in the next step.</p>
-      </div>
-    </div>
     );
-
-
-}
-
-
-function StatCard({ number, label, to }) {
-  const navigate = useNavigate();
+  }
 
   return (
-    <div
-      className="stat-card clickable"
-      onClick={() => to && navigate(to)}
-      style={{ cursor: to ? "pointer" : "default" }}
-    >
-      <div className="stat-number">{number}</div>
-      <div className="stat-label">{label}</div>
+    <div className="container-fluid px-4 py-4">
+      <div className="mb-4">
+        <h1 className="h3 fw-bold">Admin Dashboard</h1>
+        <p className="text-muted mb-0">
+          System overview and operational control
+        </p>
+      </div>
+
+      <DashboardSnapshot data={data.snapshot} />
+      <DashboardActions data={data.actions} />
+      <DashboardMomentum data={data.momentum} />
+      <DashboardActivity data={data.activity} />
     </div>
   );
 }

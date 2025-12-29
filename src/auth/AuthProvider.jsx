@@ -1,80 +1,50 @@
-// src/auth/AuthProvider.jsx
-import {  useState } from "react";
+import { useState } from "react";
 import { AuthContext } from "./AuthContext";
-import { loginRequest,logoutRequest } from "../api/ authApi";
+import { sendOtp, verifyOtp, logoutRequest } from "../api/authApi";
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(() => localStorage.getItem("token"));
-  const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
-  const [roles, setRoles] = useState(() => {
-    const storedUser = localStorage.getItem("user");
-    if (!storedUser) return [];
-    const u = JSON.parse(storedUser);
-    return u.roles || (u.role ? [u.role] : []);
-  });
-
+  const [token, setToken] = useState(localStorage.getItem("token"));
   const [loading, setLoading] = useState(false);
+  const [otpPhone, setOtpPhone] = useState(null);
 
-  async function login(email, password) {
+  async function requestOtp(phoneNumber) {
+    if (!phoneNumber) throw new Error("Phone number required");
     setLoading(true);
-
-    const data = await loginRequest(email, password);
-
-    const { user, access_token } = data;
-
-    // Save token
-    localStorage.setItem("token", access_token);
-    setToken(access_token);
-
-    // Save user in state AND localStorage
-    localStorage.setItem("user", JSON.stringify(user));
-    setUser(user);
-
-    // Normalize roles
-    const normalizedRoles =
-      user.roles || (user.role ? [user.role] : []);
-
-    setRoles(normalizedRoles);
-
+    await sendOtp(phoneNumber);
+    setOtpPhone(phoneNumber);
     setLoading(false);
   }
 
-async function logout() {
-  try {
-    if (token) {
-      await logoutRequest(token); 
-    }
-  } catch (error) {
-    console.error("Logout error:", error);
+  async function confirmOtp(code) {
+    if (!otpPhone) throw new Error("Restart login");
+
+    setLoading(true);
+    const data = await verifyOtp(otpPhone, code);
+    setLoading(false);
+
+    if (!data?.accessToken) throw new Error("Invalid OTP");
+
+    localStorage.setItem("token", data.accessToken);
+    setToken(data.accessToken);
+
+    return data.context;
   }
 
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  setToken(null);
-  setUser(null);
-  setRoles([]);
-}
-
-
-  function isAuthorized(requiredRoles = []) {
-    if (requiredRoles.length === 0) return true;
-    return roles.some((r) => requiredRoles.includes(r));
+  async function logout() {
+    if (token) await logoutRequest(token);
+    localStorage.clear();
+    setToken(null);
   }
 
   return (
     <AuthContext.Provider
       value={{
         token,
-        user,
-        roles,
         loading,
-        login,
+        requestOtp,
+        confirmOtp,
         logout,
         isLoggedIn: !!token,
-        isAuthorized,
       }}
     >
       {children}

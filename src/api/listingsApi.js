@@ -46,3 +46,21 @@ export async function deleteListing(id, token) {
     throw err.response?.data || { message: "Failed to delete listing" };
   }
 }
+
+
+export async function fetchListingById(token, listingId) {
+  try {
+    const response = await axios.get(
+      `${API_BASE}/listings/${listingId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data.data;
+  } catch (err) {
+    throw err.response?.data || { message: "Failed to fetch listing" };
+  }
+}

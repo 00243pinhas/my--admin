@@ -1,62 +1,95 @@
+import { useState , useEffect } from "react";
 import { useAuth } from "../auth/useAuth";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { requestOtp, confirmOtp, loading, isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [step, setStep] = useState("phone"); // phone | otp
+  const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState("");
+  const [error, setError] = useState("");
 
-  async function handleSubmit(e) {
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [isLoggedIn, navigate]);
+
+  async function submitPhone(e) {
     e.preventDefault();
     try {
-      await login(email, password);
-      navigate("/dashboard");
+      await requestOtp(phone);
+      setStep("otp");
     } catch (err) {
-      console.error(err);
+      setError(err.message);
     }
   }
 
+    async function submitOtp(e) {
+      e.preventDefault();
+      try {
+        await confirmOtp(otp);
+      } catch (err) {
+        setError(err.message);
+      }
+  }
+
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
-      <form onSubmit={handleSubmit} className="w-full max-w-md bg-gray-800 rounded-lg shadow-lg p-8 space-y-6">
-        <h1 className="text-3xl font-bold text-white text-center mb-8">Login</h1>
-        
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">Email</label>
-          <input 
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter your email"
-            required
-          />
-        </div>
+    <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
+      <div className="card shadow-sm border-0" style={{ width: 380 }}>
+        <div className="card-body p-4">
 
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">Password</label>
-          <input 
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter your password"
-            required
-          />
-        </div>
+          <div className="text-center mb-4">
+            <h3 className="fw-bold mb-1">Admin Dashboard</h3>
+            <p className="text-muted">Secure access</p>
+          </div>
 
-        <button 
-          type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
-        >
-          Sign In
-        </button>
-      </form>
+          {error && (
+            <div className="alert alert-danger py-2">{error}</div>
+          )}
+
+          {step === "phone" && (
+            <form onSubmit={submitPhone}>
+              <div className="mb-3">
+                <label className="form-label">Phone number</label>
+                <input
+                  type="tel"
+                  className="form-control"
+                  placeholder="+90..."
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required
+                />
+              </div>
+              <button className="btn btn-primary w-100" disabled={loading}>
+                {loading ? "Sending OTP..." : "Continue"}
+              </button>
+            </form>
+          )}
+
+          {step === "otp" && (
+            <form onSubmit={submitOtp}>
+              <div className="mb-3">
+                <label className="form-label">OTP Code</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  required
+                />
+              </div>
+              <button className="btn btn-primary w-100" disabled={loading}>
+                Verify
+              </button>
+            </form>
+          )}
+
+        </div>
+      </div>
     </div>
   );
 }

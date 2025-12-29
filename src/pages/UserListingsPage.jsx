@@ -23,9 +23,12 @@ export default function UserListingsPage() {
       setLoading(true);
       setError("");
       const data = await fetchUserListings(token, userId);
-      console.log(data)
 
-      setListings(data.listings || []);
+     let items = Array.isArray(data) ? data : data.items || [];
+
+     console.log(items);
+
+      setListings(items);
     } catch (err) {
       console.error(err);
       setError("Failed to load user listings");
@@ -33,6 +36,7 @@ export default function UserListingsPage() {
       setLoading(false);
     }
   }
+
 
   if (!token) return <div>Admin access required</div>;
   if (loading) return <div>Loading user listings…</div>;
@@ -70,6 +74,15 @@ export default function UserListingsPage() {
                   ? new Date(l.created_at).toLocaleString()
                   : "-"}
               </td>
+
+                  <tr>
+                      <button
+                        onClick={() => navigate(`/dashboard/listings/${l.id}`)}
+                      >
+                        View Details
+                      </button>
+                  </tr>
+
               <td>
                 <button
                   onClick={() =>
@@ -80,6 +93,10 @@ export default function UserListingsPage() {
                 </button>
               </td>
             </tr>
+
+            
+
+            
           ))}
 
           {listings.length === 0 && (
