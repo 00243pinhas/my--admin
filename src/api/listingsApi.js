@@ -58,7 +58,6 @@ export async function fetchListingById(token, listingId) {
         },
       }
     );
-
     return response.data.data;
   } catch (err) {
     throw err.response?.data || { message: "Failed to fetch listing" };

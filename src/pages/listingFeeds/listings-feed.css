@@ -1,0 +1,30 @@
+/* ============================
+   Listings Feed – Row Hover UX
+============================ */
+
+.listings-feed-table tbody tr {
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.listings-feed-table tbody tr:hover {
+  background-color: rgba(13, 110, 253, 0.04); /* Bootstrap primary tint */
+}
+
+.listings-feed-table tbody tr:hover td {
+  background-color: transparent;
+}
+
+/* Actions fade-in effect */
+.listings-feed-table tbody tr .listing-actions {
+  opacity: 0.65;
+  transition: opacity 0.15s ease;
+}
+
+.listings-feed-table tbody tr:hover .listing-actions {
+  opacity: 1;
+}
+
+/* Button subtle lift */
+.listings-feed-table tbody tr:hover .btn {
+  transform: translateY(-1px);
+}

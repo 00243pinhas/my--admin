@@ -8,6 +8,7 @@ import ListingFilesPage from "../pages/ListingFilesPage";
 import UserListingsPage from "../pages/UserListingsPage";
 import ListingDetailsPage from "../pages/ListingDetailsPage";
 import DashboardLayout from "../ components/layouts/DashboardLayout";
+import ListingsFeed from "../pages/listingFeeds/ListingsFeed";
 
 export default function AppRouter() {
   return (
@@ -20,6 +21,7 @@ export default function AppRouter() {
     
         <Route path="/login" element={<LoginPage />} />
 
+        <Route path="dashboard/listings" element={<ListingsFeed/>} />
        
         <Route
           path="/dashboard"
