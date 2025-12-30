@@ -1,5 +1,6 @@
 import ListingsFeedRow from "./ListingsFeedRow";
 import "./listings-feed.css";
+import Toast from "../../ components/Toast";
 export default function ListingsFeedTable({
   loading,
   error,

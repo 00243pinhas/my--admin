@@ -22,3 +22,48 @@
 .bg-teal   { background-color: #14b8a6; }
 
 
+/* =========================
+   DASHBOARD GLOBAL RHYTHM
+========================= */
+
+.dashboard-page {
+  padding-bottom: 2rem;
+}
+
+/* Section spacing */
+.dashboard-section {
+  margin-bottom: 1.5rem;
+}
+
+/* Card consistency */
+.dashboard-card {
+  border-radius: 0.75rem;
+}
+
+/* Clickable affordance */
+.clickable {
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.clickable:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* Muted subtitle */
+.dashboard-subtitle {
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+/* Badge alignment */
+.dashboard-badge {
+  min-width: 32px;
+  text-align: center;
+}
+
+/* Action list hover */
+.dashboard-action-item:hover {
+  background-color: rgba(13, 110, 253, 0.04);
+}

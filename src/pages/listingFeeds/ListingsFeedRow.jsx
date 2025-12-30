@@ -48,10 +48,11 @@ export default function ListingsFeedRow({
       ? `${listing.user.first_name || ""} ${listing.user.last_name || ""}`.trim()
       : listing.user_id || "—";
 
-  const type = listing.listing_type || listing.type || "—";
+  const type = listing.listingType?.name || "—";
+  console.log(listing);
 
-  const createdAt = listing.created_at
-    ? new Date(listing.created_at).toLocaleString()
+  const createdAt = listing.createdAt
+    ? new Date(listing.createdAt).toLocaleString()
     : "—";
 
   return (

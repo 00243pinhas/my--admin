@@ -11,7 +11,12 @@ import {
 import ListingsFeedHeader from "./ListingsFeedHeader";
 import ListingsFeedFilters from "./ListingsFeedFilters";
 import ListingsFeedTable from "./ListingsFeedTable";
+
 import ConfirmModal from "../../ components/ConfirmModal";
+import Toast from "../../ components/Toast";
+
+import "./listings-feed.css";
+
 
 
 function normalizeListings(data) {
@@ -20,26 +25,44 @@ function normalizeListings(data) {
   return [];
 }
 
+
 export default function ListingsFeed() {
   const { token } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
 
-  const filters = useMemo(() => ({
-    status: searchParams.get("status") || "",
-    type: searchParams.get("type") || "",
-    search: searchParams.get("search") || "",
-    userId: searchParams.get("userId") || "",
-  }), [searchParams]);
-
+  const filters = useMemo(
+    () => ({
+      status: searchParams.get("status") || "",
+      type: searchParams.get("type") || "",
+      search: searchParams.get("search") || "",
+      userId: searchParams.get("userId") || "",
+    }),
+    [searchParams]
+  );
 
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const [actionLoading, setActionLoading] = useState(null); // { id, type }
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
+
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "success",
+  });
+
+
+  function showToast(message, type = "success") {
+    setToast({ show: true, message, type });
+    setTimeout(() => {
+      setToast((t) => ({ ...t, show: false }));
+    }, 3000);
+  }
 
 
   useEffect(() => {
@@ -53,7 +76,6 @@ export default function ListingsFeed() {
       setError("");
 
       const data = await fetchAllListings(token, filters.status);
-    //   console.log(data)
       setListings(normalizeListings(data));
     } catch (err) {
       console.error(err);
@@ -62,6 +84,7 @@ export default function ListingsFeed() {
       setLoading(false);
     }
   }
+
 
   const visibleListings = useMemo(() => {
     let items = [...listings];
@@ -81,7 +104,7 @@ export default function ListingsFeed() {
     }
 
     if (filters.search) {
-      const q = filters.search.toLowerCase();
+      const q = filters.search.toLowerCase().trim();
       items = items.filter(
         (l) =>
           (l.title || "").toLowerCase().includes(q) ||
@@ -95,13 +118,12 @@ export default function ListingsFeed() {
 
   function applyFilters(next) {
     const params = new URLSearchParams();
-
-    Object.entries(next).forEach(([k, v]) => {
-      if (v) params.set(k, v);
+    Object.entries(next).forEach(([key, value]) => {
+      if (value) params.set(key, value);
     });
-
     setSearchParams(params);
   }
+
 
   function onView(id) {
     navigate(`/dashboard/listings/${id}`);
@@ -109,29 +131,43 @@ export default function ListingsFeed() {
 
   async function onApprove(id) {
     try {
+      setActionLoading({ id, type: "approve" });
+
       await updateListingStatus(id, { status: "active" }, token);
+
       setListings((prev) =>
         prev.map((l) =>
           l.id === id ? { ...l, status: "active" } : l
         )
       );
+
+      showToast("Listing approved successfully");
     } catch (err) {
       console.error(err);
-      alert("Failed to approve listing");
+      showToast("Failed to approve listing", "error");
+    } finally {
+      setActionLoading(null);
     }
   }
 
   async function onReject(id) {
     try {
+      setActionLoading({ id, type: "reject" });
+
       await updateListingStatus(id, { status: "rejected" }, token);
+
       setListings((prev) =>
         prev.map((l) =>
           l.id === id ? { ...l, status: "rejected" } : l
         )
       );
+
+      showToast("Listing rejected");
     } catch (err) {
       console.error(err);
-      alert("Failed to reject listing");
+      showToast("Failed to reject listing", "error");
+    } finally {
+      setActionLoading(null);
     }
   }
 
@@ -140,21 +176,20 @@ export default function ListingsFeed() {
   }
 
   async function confirmDelete() {
-
-    console.log(token)
     if (!deleteTarget) return;
 
     try {
       setDeleting(true);
-
-      await deleteListing(deleteTarget,token);
+      await deleteListing(deleteTarget.id, token);
 
       setListings((prev) =>
         prev.filter((l) => l.id !== deleteTarget.id)
       );
+
+      showToast("Listing deleted successfully");
     } catch (err) {
       console.error(err);
-      alert("Failed to delete listing");
+      showToast("Failed to delete listing", "error");
     } finally {
       setDeleting(false);
       setDeleteTarget(null);
@@ -163,7 +198,7 @@ export default function ListingsFeed() {
 
 
   return (
-    <div className="container-fluid p-5">
+    <div className="container-fluid">
       <ListingsFeedHeader />
 
       <ListingsFeedFilters
@@ -179,6 +214,7 @@ export default function ListingsFeed() {
         onApprove={onApprove}
         onReject={onReject}
         onDelete={requestDelete}
+        actionLoading={actionLoading}
       />
 
       <ConfirmModal
@@ -186,14 +222,21 @@ export default function ListingsFeed() {
         title="Delete listing"
         message={
           deleteTarget
-            ? `Are you sure you want to permanently delete? ${deleteTarget.title} This action cannot be undone.`
+            ? `Are you sure you want to permanently delete "${deleteTarget.title}"? This action cannot be undone.`
             : ""
         }
         confirmLabel="Delete listing"
         confirmVariant="danger"
+        loading={deleting}
         onConfirm={confirmDelete}
         onCancel={() => setDeleteTarget(null)}
-        loading={deleting}
+      />
+
+      <Toast
+        show={toast.show}
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast((t) => ({ ...t, show: false }))}
       />
     </div>
   );
