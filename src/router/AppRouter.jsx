@@ -6,9 +6,10 @@ import UsersPage from "../pages/UsersPage";
 import ProtectedRoute from "../auth/ProtectedRoute";
 import ListingFilesPage from "../pages/ListingFilesPage";
 import UserListingsPage from "../pages/UserListingsPage";
-import ListingDetailsPage from "../pages/ListingDetailsPage";
+// import ListingDetailsPage from "../pages/ListingDetailsPage";
 import DashboardLayout from "../ components/layouts/DashboardLayout";
 import ListingsFeed from "../pages/listingFeeds/ListingsFeed";
+import ListingDetailsPage from "../pages/listingDetails/ListingDetailsPage"
 
 export default function AppRouter() {
   return (
@@ -36,7 +37,7 @@ export default function AppRouter() {
 
           <Route path="listings" element={<ListingsPage />} />
 
-          <Route path="listings/:listingId" element={<ListingDetailsPage />} />
+          {/* <Route path="listings/:listingId" element={<ListingDetailsPage />} /> */}
 
   
           <Route path="users" element={<UsersPage />} />
@@ -67,6 +68,15 @@ export default function AppRouter() {
               <ListingFilesPage />
             </ProtectedRoute>
           }
+        />
+
+        <Route
+        path="/dashboard/listings/:listingId"
+        element={
+          <ProtectedRoute>
+            <ListingDetailsPage />
+          </ProtectedRoute>
+        }
         />
 
       </Routes>
