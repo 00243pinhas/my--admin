@@ -6,9 +6,8 @@ export default function ActivityTimeline() {
       </div>
 
       <div className="card-body text-muted small">
-        No activity recorded yet.
+        Activity tracking will be enabled in a future update.
       </div>
     </div>
   );
 }
-

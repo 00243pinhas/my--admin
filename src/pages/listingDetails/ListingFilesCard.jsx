@@ -1,4 +1,4 @@
-export default function ListingFilesCard() {
+export default function ListingFilesCard({ files = [] }) {
   return (
     <div className="card">
       <div className="card-header">
@@ -6,21 +6,26 @@ export default function ListingFilesCard() {
       </div>
 
       <div className="card-body">
-        <div className="row g-3">
-
-          <div className="col-md-3">
-            <div className="border rounded p-2 text-center small">
-              Image Preview
-            </div>
+        {files.length === 0 ? (
+          <div className="text-muted small">
+            No files attached to this listing.
           </div>
-
-          <div className="col-md-3">
-            <div className="border rounded p-2 text-center small">
-              Document.pdf
-            </div>
+        ) : (
+          <div className="row g-3">
+            {files.map((file) => (
+              <div key={file.id} className="col-md-3">
+                <div className="border rounded p-2 small text-center">
+                  {file.mimeType?.startsWith("image/")
+                    ? "Image"
+                    : "Document"}
+                  <div className="mt-1 text-muted">
+                    {file.originalName || "File"}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-
-        </div>
+        )}
       </div>
     </div>
   );

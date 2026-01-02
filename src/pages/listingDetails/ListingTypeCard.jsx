@@ -1,4 +1,6 @@
-export default function ListingTypeCard() {
+export default function ListingTypeCard({ listing }) {
+  const type = listing.listingType;
+
   return (
     <div className="card">
       <div className="card-header">
@@ -7,7 +9,9 @@ export default function ListingTypeCard() {
 
       <div className="card-body">
         <div className="text-muted">
-          Real Estate → Residential → Apartment
+          {type?.name || "Unknown"}
+          {type?.category && ` → ${type.category}`}
+          {type?.subType && ` → ${type.subType}`}
         </div>
       </div>
     </div>
