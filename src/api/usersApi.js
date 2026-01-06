@@ -51,3 +51,24 @@ export async function updateUserRole(token, userId, role) {
   }
 }
 
+
+export async function deleteUser(token, userId) {
+  try {
+    const res = await axios.delete(
+      `${API_BASE}/users/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || {
+      message: "Failed to delete user",
+    };
+  }
+}
+
+

@@ -26,7 +26,8 @@ export default function UserListingsCard({ listings }) {
 
                 <td>
                   <span className="badge bg-secondary">
-                    {l.accountStatus}
+                    {l.status}
+                  
                   </span>
                 </td>
               </tr>

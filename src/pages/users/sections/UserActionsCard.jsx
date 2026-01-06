@@ -1,27 +1,74 @@
 import { useAuth } from "../../../auth/useAuth";
-import { updateUserStatus, updateUserRole } from "../../../api/usersApi";
+import { updateUserStatus, updateUserRole,deleteUser } from "../../../api/usersApi";
 import ConfirmModal from "../../../ components/ConfirmModal";
 import { useState } from "react";
 
+import Toast from "../../../ components/Toast";
+
+
 export default function UserActionsCard({ user, onChange }) {
   const { token } = useAuth();
-  const [deleting, setDeleting] = useState(false);
 
-  async function setStatus(status) {
+async function setStatus(status) {
+  try {
     await updateUserStatus(token, user.id, status);
+    showToast("User status updated");
     onChange();
+  } catch (err) {
+    console.error(err);
+    showToast("Failed to update user status", "error");
+  }
+}
+
+
+  const [deleting, setDeleting] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "success",
+  });
+
+  function showToast(message, type = "success") {
+    setToast({ show: true, message, type });
+    setTimeout(() => {
+      setToast((t) => ({ ...t, show: false }));
+    }, 3000);
   }
 
-  async function setRole(role) {
+
+    async function setRole(role) {
+      try {
+        await updateUserRole(token, user.id, role);
+        showToast("User role updated");
+        onChange();
+      } catch (err) {
+        console.error(err);
+        showToast("Failed to update user role", "error");
+      }
+    }
+
+
+    async function confirmDelete() {
     try {
-      await updateUserRole(token, user.id, role);
-      onChange();
+      setDeleteLoading(true);
+
+      await deleteUser(token, user.id);
+
+      showToast("User deleted successfully");
+
+      window.location.href = "/dashboard/users";
     } catch (err) {
-      console.error("Failed to update role", err);
-      alert("Failed to update user role");
+      console.error(err);
+      showToast("Failed to delete user", "error");
+    } finally {
+      setDeleteLoading(false);
+      setDeleting(false);
     }
   }
 
+  
 
 
   return (
@@ -32,7 +79,7 @@ export default function UserActionsCard({ user, onChange }) {
 
       <div className="card-body d-flex flex-column gap-3">
 
-        {/* STATUS */}
+     
         <div>
           <label className="form-label small">
             Account Status
@@ -71,7 +118,7 @@ export default function UserActionsCard({ user, onChange }) {
           )}
         </div>
 
-        {/* ROLE */}
+    
           <div>
             <label className="form-label small">Role</label>
 
@@ -90,7 +137,7 @@ export default function UserActionsCard({ user, onChange }) {
             </div>
           </div>
 
-        {/* DELETE */}
+     
         <div className="border-top pt-3">
           <button
             className="btn btn-outline-danger btn-sm"
@@ -104,15 +151,24 @@ export default function UserActionsCard({ user, onChange }) {
       <ConfirmModal
         show={deleting}
         title="Delete user"
-        message={`Are you sure you want to permanently delete "${user.email}"?`}
+        message={`Are you sure you want to permanently delete "${user.title}"? This action cannot be undone.`}
         confirmLabel="Delete user"
         confirmVariant="danger"
-        onConfirm={() => {
-          // You already have DELETE /users/{id}
-          // We keep it simple for now
-        }}
+        loading={deleteLoading}
+        onConfirm={confirmDelete}
         onCancel={() => setDeleting(false)}
       />
+
+      <Toast
+        show={toast.show}
+        message={toast.message}
+        type={toast.type}
+        onClose={() =>
+          setToast((t) => ({ ...t, show: false }))
+        }
+      />
+
+
     </div>
   );
 }

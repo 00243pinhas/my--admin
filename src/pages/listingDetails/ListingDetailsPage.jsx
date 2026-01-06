@@ -170,7 +170,8 @@ export default function ListingDetailsPage() {
         </div>
 
         <div className="col-12">
-          <OwnerInfoCard owner={listing.owner} />
+          {console.log(listing)}
+          <OwnerInfoCard owner={listing.user} />
         </div>
 
         <div className="col-12">
