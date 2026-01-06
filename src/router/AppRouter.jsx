@@ -2,14 +2,16 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "../pages/LoginPage";
 import Dashboard from "../pages/Dashboard";
 import ListingsPage from "../pages/ListingsPage";
-import UsersPage from "../pages/UsersPage";
+// import UsersPage from "../pages/UsersPage";
 import ProtectedRoute from "../auth/ProtectedRoute";
 import ListingFilesPage from "../pages/ListingFilesPage";
-import UserListingsPage from "../pages/UserListingsPage";
+// import UserListingsPage from "../pages/UserListingsPage";
 // import ListingDetailsPage from "../pages/ListingDetailsPage";
 import DashboardLayout from "../ components/layouts/DashboardLayout";
 import ListingsFeed from "../pages/listingFeeds/ListingsFeed";
 import ListingDetailsPage from "../pages/listingDetails/ListingDetailsPage"
+import UsersPage from "../pages/users/UsersPage";
+import UserDetailsPage from "../pages/users/UserDetailsPage";
 
 export default function AppRouter() {
   return (
@@ -36,21 +38,9 @@ export default function AppRouter() {
           <Route index element={<Dashboard />} />
 
           <Route path="listings" element={<ListingsPage />} />
-
-          {/* <Route path="listings/:listingId" element={<ListingDetailsPage />} /> */}
-
   
-          <Route path="users" element={<UsersPage />} />
         </Route>
 
-        <Route
-          path="/users/:userId/listings"
-          element={
-            <ProtectedRoute>
-              <UserListingsPage />
-            </ProtectedRoute>
-          }
-        />
 
         <Route
           path="/listings/:listingId/files"
@@ -71,6 +61,25 @@ export default function AppRouter() {
         />
 
         <Route
+          path="/dashboard/users"
+          element={
+            <ProtectedRoute>
+              <UsersPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard/users/:userId"
+          element={
+            <ProtectedRoute>
+              <UserDetailsPage />
+            </ProtectedRoute>
+          }
+        />
+
+
+        <Route
         path="/dashboard/listings/:listingId"
         element={
           <ProtectedRoute>
@@ -78,7 +87,6 @@ export default function AppRouter() {
           </ProtectedRoute>
         }
         />
-
       </Routes>
     </BrowserRouter>
   );

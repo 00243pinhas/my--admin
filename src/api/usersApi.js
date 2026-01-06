@@ -8,14 +8,17 @@ export async function fetchAllUsers(token) {
   return res.data.data;
 }
 
-export async function updateUserRole(token, userId, role) {
-  const res = await axios.patch(
-    `${API_BASE}/users/${userId}/role`,
-    { role },
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    }
-  );
+export async function fetchUserById(token, userId) {
+  const res = await axios.get(`${API_BASE}/users/${userId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data.data;
+}
+
+export async function fetchUserListings(token, userId) {
+  const res = await axios.get(`${API_BASE}/users/${userId}/listings`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   return res.data.data;
 }
 
@@ -23,29 +26,16 @@ export async function updateUserStatus(token, userId, status) {
   const res = await axios.patch(
     `${API_BASE}/users/${userId}/status`,
     { status },
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    }
+    { headers: { Authorization: `Bearer ${token}` } }
   );
   return res.data.data;
 }
 
-export async function deleteUser(token, userId) {
-  const res = await axios.delete(`${API_BASE}/users/${userId}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return res.data;
-}
-
-export async function fetchUserListings(token, userId) {
-  const response = await axios.get(
-    `${API_BASE}/users/${userId}/listings`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
+export async function updateUserRole(token, userId, roleId) {
+  const res = await axios.patch(
+    `${API_BASE}/users/${userId}/role`,
+    { roleId },
+    { headers: { Authorization: `Bearer ${token}` } }
   );
-
-  return response.data.data;
+  return res.data.data;
 }

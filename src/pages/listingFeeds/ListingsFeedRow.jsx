@@ -49,7 +49,7 @@ export default function ListingsFeedRow({
       : listing.user_id || "—";
 
   const type = listing.listingType?.name || "—";
-  console.log(listing);
+
 
   const createdAt = listing.createdAt
     ? new Date(listing.createdAt).toLocaleString()
