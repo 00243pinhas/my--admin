@@ -36,21 +36,11 @@ export default function UsersPage() {
     load();
   }, [token]);
 
-
-// console.log("USERS RAW:", users.map(u => ({
-//   accountStatus: u.accountStatus,
-//   role: u.role?.role,
-// })));
-// console.log("FILTERS:", filters);
-
-
-
  
  const visibleUsers = useMemo(() => {
   let items = [...users];
 
  
-  // SEARCH
   if (filters.search) {
     const q = filters.search.toLowerCase().trim();
     items = items.filter(

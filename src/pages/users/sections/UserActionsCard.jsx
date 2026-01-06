@@ -12,10 +12,17 @@ export default function UserActionsCard({ user, onChange }) {
     onChange();
   }
 
-  async function setRole(roleCode) {
-    await updateUserRole(token, user.id, roleCode);
-    onChange();
+  async function setRole(role) {
+    try {
+      await updateUserRole(token, user.id, role);
+      onChange();
+    } catch (err) {
+      console.error("Failed to update role", err);
+      alert("Failed to update user role");
+    }
   }
+
+
 
   return (
     <div className="card mb-4">
@@ -65,18 +72,23 @@ export default function UserActionsCard({ user, onChange }) {
         </div>
 
         {/* ROLE */}
-        <div>
-          <label className="form-label small">Role</label>
-          <select
-            className="form-select"
-            value={user.role?.code || ""}
-            onChange={(e) => setRole(e.target.value)}
-          >
-            <option value="regular_user">Regular User</option>
-            <option value="admin">Admin</option>
-            <option value="moderator">Moderator</option>
-          </select>
-        </div>
+          <div>
+            <label className="form-label small">Role</label>
+
+            <select
+                className="form-select"
+                value={user.role?.role || ""}
+                onChange={(e) => setRole(e.target.value)}
+              >
+                <option value="regular_user">Regular User</option>
+                <option value="moderator">Moderator</option>
+                <option value="admin">Admin</option>
+            </select>
+
+            <div className="text-muted small mt-1">
+              Changing role takes effect immediately.
+            </div>
+          </div>
 
         {/* DELETE */}
         <div className="border-top pt-3">

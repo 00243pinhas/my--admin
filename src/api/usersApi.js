@@ -31,11 +31,23 @@ export async function updateUserStatus(token, userId, status) {
   return res.data.data;
 }
 
-export async function updateUserRole(token, userId, roleId) {
-  const res = await axios.patch(
-    `${API_BASE}/users/${userId}/role`,
-    { roleId },
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
-  return res.data.data;
+export async function updateUserRole(token, userId, role) {
+  try {
+    const res = await axios.patch(
+      `${API_BASE}/users/${userId}/role`,
+      { role }, 
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || {
+      message: "Failed to update user role",
+    };
+  }
 }
+
