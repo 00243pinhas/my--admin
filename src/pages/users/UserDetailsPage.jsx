@@ -5,6 +5,7 @@ import { useAuth } from "../../auth/useAuth";
 import {
   fetchUserById,
   fetchUserListings,
+  // fetchUserFavorites
 } from "../../api/usersApi";
 
 import UserHeader from "../users/sections/UserHeader";
@@ -12,6 +13,8 @@ import UserHeader from "../users/sections/UserHeader";
 import UserListingsCard from "./sections/UserListingsCard";
 import UserActionsCard from "./sections/UserActionsCard";
 import UserSubscriptionCard from "./sections/UserSubscriptionCard";
+import UserFavoritesCard from "./sections/UserFavoritesCard";
+
 
 
 export default function UserDetailsPage() {
@@ -21,21 +24,32 @@ export default function UserDetailsPage() {
   const [user, setUser] = useState(null);
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
+  // const [favorites, setFavorites] = useState([]);
 
 
   async function load() {
     try {
       setLoading(true);
-      const [u, l] = await Promise.all([
+
+      const [
+        userData,
+        userListings,
+        // userFavorites,
+      ] = await Promise.all([
         fetchUserById(token, userId),
         fetchUserListings(token, userId),
+        // fetchUserFavorites(token, userId),
       ]);
-      setUser(u);
-      setListings(l || []);
+
+      setUser(userData);
+      setListings(userListings || []);
+      // setFavorites(Array.isArray(userFavorites) ? userFavorites : []);
     } finally {
       setLoading(false);
     }
   }
+
+  console.log(userId);
 
   // console.log(user.accountStatus);
   useEffect(() => {
@@ -51,6 +65,7 @@ export default function UserDetailsPage() {
       <UserHeader user={user} />
       {/* <UserProfileCard user={user} /> */}
       <UserSubscriptionCard userId={user.id} />
+      {/* <UserFavoritesCard favorites={favorites} /> */}
       <UserActionsCard user={user} onChange={load} />
       <UserListingsCard listings={listings} />
     </div>

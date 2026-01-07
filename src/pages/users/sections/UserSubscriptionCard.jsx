@@ -4,6 +4,7 @@ import { useAuth } from "../../../auth/useAuth";
 import {
   fetchUserSubscriptions,
   createUserSubscription,
+  cancelUserSubscription // ✅ admin update
 } from "../../../api/usersApi";
 
 import { fetchAdminSubscriptionPlans } from "../../../api/subscriptionPlansApi";
@@ -11,7 +12,7 @@ import { fetchAdminSubscriptionPlans } from "../../../api/subscriptionPlansApi";
 import ConfirmModal from "../../../ components/ConfirmModal";
 import Toast from "../../../ components/Toast";
 
-export default function UserSubscriptionCard({ userId }) {
+export default function UserSubscriptionsCard({ userId }) {
   const { token } = useAuth();
 
   const [subscriptions, setSubscriptions] = useState([]);
@@ -22,6 +23,9 @@ export default function UserSubscriptionCard({ userId }) {
 
   const [selectedPlanId, setSelectedPlanId] = useState("");
   const [confirmAssign, setConfirmAssign] = useState(false);
+
+  const [canceling, setCanceling] = useState(false);
+  const [confirmCancel, setConfirmCancel] = useState(false);
 
   const [toast, setToast] = useState({
     show: false,
@@ -40,23 +44,27 @@ export default function UserSubscriptionCard({ userId }) {
     try {
       setLoading(true);
 
-      const [subs, plansData] = await Promise.all([
+      const [subsRes, plansRes] = await Promise.all([
         fetchUserSubscriptions(token, userId),
         fetchAdminSubscriptionPlans(token),
       ]);
 
+      // ✅ normalize responses
       setSubscriptions(
-        Array.isArray(subs?.subscriptions)
-          ? subs.subscriptions
+        Array.isArray(subsRes?.data)
+          ? subsRes.data
+          : Array.isArray(subsRes?.subscriptions)
+          ? subsRes.subscriptions
           : []
       );
 
       setPlans(
-        Array.isArray(plansData?.plans)
-          ? plansData.plans
+        Array.isArray(plansRes?.data)
+          ? plansRes.data
+          : Array.isArray(plansRes?.plans)
+          ? plansRes.plans
           : []
-      ); 
-
+      );
     } catch (err) {
       console.error(err);
       showToast("Failed to load subscription data", "error");
@@ -64,7 +72,6 @@ export default function UserSubscriptionCard({ userId }) {
       setLoading(false);
     }
   }
-
 
   useEffect(() => {
     if (!token || !userId) return;
@@ -77,8 +84,10 @@ export default function UserSubscriptionCard({ userId }) {
 
   async function assignPlan() {
     if (!selectedPlanId) return;
+
     try {
       setAssigning(true);
+
       await createUserSubscription(token, userId, {
         subscriptionPlanId: selectedPlanId,
       });
@@ -96,6 +105,30 @@ export default function UserSubscriptionCard({ userId }) {
       );
     } finally {
       setAssigning(false);
+    }
+  }
+
+  async function cancelSubscription() {
+    if (!current) return;
+
+    try {
+      setCanceling(true);
+
+      // ✅ ADMIN-CORRECT: update subscription status
+      await cancelUserSubscription(token, current.id);
+
+      showToast("Subscription canceled successfully");
+      setConfirmCancel(false);
+
+      await load();
+    } catch (err) {
+      console.error(err);
+      showToast(
+        err?.message || "Failed to cancel subscription",
+        "error"
+      );
+    } finally {
+      setCanceling(false);
     }
   }
 
@@ -122,7 +155,8 @@ export default function UserSubscriptionCard({ userId }) {
               ) : (
                 <ul className="list-unstyled mb-0">
                   <li>
-                    <strong>Plan:</strong> {current.subscriptionPlan?.name || "—"}
+                    <strong>Plan:</strong>{" "}
+                    {current.subscriptionPlan?.name || "—"}
                   </li>
                   <li>
                     <strong>Status:</strong>{" "}
@@ -144,9 +178,21 @@ export default function UserSubscriptionCard({ userId }) {
                   </li>
                 </ul>
               )}
+
+              {current && (
+                <div className="mt-3">
+                  <button
+                    className="btn btn-outline-danger btn-sm"
+                    onClick={() => setConfirmCancel(true)}
+                    disabled={canceling}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
             </div>
 
-            {/* ASSIGN SUBSCRIPTION (ADMIN ACTION) */}
+            {/* ASSIGN SUBSCRIPTION */}
             <div className="border-top pt-3">
               <div className="d-flex gap-2 flex-wrap align-items-end">
                 <div style={{ minWidth: 260 }}>
@@ -156,7 +202,9 @@ export default function UserSubscriptionCard({ userId }) {
                   <select
                     className="form-select"
                     value={selectedPlanId}
-                    onChange={(e) => setSelectedPlanId(e.target.value)}
+                    onChange={(e) =>
+                      setSelectedPlanId(e.target.value)
+                    }
                   >
                     <option value="">Select a plan…</option>
                     {plans.map((p) => (
@@ -177,14 +225,27 @@ export default function UserSubscriptionCard({ userId }) {
               </div>
 
               <div className="text-muted small mt-2">
-                Admin assigns a subscription directly (no payment flow).
+                Admin assigns a subscription directly (no payment
+                flow).
               </div>
             </div>
           </>
         )}
       </div>
 
-      {/* CONFIRM ASSIGN */}
+      {/* CANCEL CONFIRM */}
+      <ConfirmModal
+        show={confirmCancel}
+        title="Cancel subscription"
+        message="Are you sure you want to cancel this subscription? The user will lose access according to the plan rules."
+        confirmLabel="Cancel subscription"
+        confirmVariant="danger"
+        loading={canceling}
+        onConfirm={cancelSubscription}
+        onCancel={() => setConfirmCancel(false)}
+      />
+
+      {/* ASSIGN CONFIRM */}
       <ConfirmModal
         show={confirmAssign}
         title="Assign subscription"
@@ -196,12 +257,13 @@ export default function UserSubscriptionCard({ userId }) {
         onCancel={() => setConfirmAssign(false)}
       />
 
-      {/* TOAST */}
       <Toast
         show={toast.show}
         message={toast.message}
         type={toast.type}
-        onClose={() => setToast((t) => ({ ...t, show: false }))}
+        onClose={() =>
+          setToast((t) => ({ ...t, show: false }))
+        }
       />
     </div>
   );

@@ -10,6 +10,7 @@ export default function UserListingsCard({ listings }) {
             <tr>
               <th>Title</th>
               <th>Status</th>
+              
             </tr>
           </thead>
           <tbody>

@@ -109,6 +109,43 @@ export async function createUserSubscription(token, userId, payload) {
 }
 
 
+export async function cancelUserSubscription(token, subscriptionId) {
+  try {
+    const res = await axios.patch(
+      `${API_BASE}/users/user-subscriptions/${subscriptionId}`,
+      { status: "canceled" },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res.data.data;
+  } catch (err) {
+    throw err.response?.data || {
+      message: "Failed to cancel subscription",
+    };
+  }
+}
+
+export async function fetchUserFavorites(token, userId) {
+  try {
+    const res = await axios.get(
+      `${API_BASE}/users/${userId}/favorite-listings`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return res.data.data;
+  } catch (err) {
+    throw err.response?.data || {
+      message: "Failed to fetch user favorites",
+    };
+  }
+}
 
 
 

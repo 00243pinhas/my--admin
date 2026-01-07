@@ -21,8 +21,8 @@ export default function OwnerInfoCard({ owner }) {
             {owner.firstName} {owner.lastName}
           </strong>
           <div className="text-muted small">{owner.title}</div>
-          <span className="badge bg-success mt-1">
-            {owner.status || "active"}
+          <span className="mt-1">
+            {owner.id || "active"}
           </span>
         </div>
 

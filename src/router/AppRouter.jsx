@@ -12,6 +12,8 @@ import ListingsFeed from "../pages/listingFeeds/ListingsFeed";
 import ListingDetailsPage from "../pages/listingDetails/ListingDetailsPage"
 import UsersPage from "../pages/users/UsersPage";
 import UserDetailsPage from "../pages/users/UserDetailsPage";
+import LanguagesPage from "../pages/languages/LanguagesPage";
+import SubscriptionsPage from "../pages/Subscriptions/SubscriptionsPage";
 
 export default function AppRouter() {
   return (
@@ -38,6 +40,7 @@ export default function AppRouter() {
           <Route index element={<Dashboard />} />
 
           <Route path="listings" element={<ListingsPage />} />
+
   
         </Route>
 
@@ -87,6 +90,20 @@ export default function AppRouter() {
           </ProtectedRoute>
         }
         />
+
+
+
+        <Route
+          path="/dashboard/languages"
+          element={<LanguagesPage />}
+        />
+
+         <Route
+          path="/dashboard/subscriptions" 
+          element={<SubscriptionsPage />} />
+
+
+
       </Routes>
     </BrowserRouter>
   );
