@@ -11,6 +11,8 @@ import UserHeader from "../users/sections/UserHeader";
 // import UserProfileCard from "./sections/UserProfileCard";
 import UserListingsCard from "./sections/UserListingsCard";
 import UserActionsCard from "./sections/UserActionsCard";
+import UserSubscriptionCard from "./sections/UserSubscriptionCard";
+
 
 export default function UserDetailsPage() {
   const { userId } = useParams();
@@ -48,6 +50,7 @@ export default function UserDetailsPage() {
       <h4 className="mb-3">User Details</h4>
       <UserHeader user={user} />
       {/* <UserProfileCard user={user} /> */}
+      <UserSubscriptionCard userId={user.id} />
       <UserActionsCard user={user} onChange={load} />
       <UserListingsCard listings={listings} />
     </div>

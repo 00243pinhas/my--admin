@@ -71,4 +71,44 @@ export async function deleteUser(token, userId) {
   }
 }
 
+export async function fetchUserSubscriptions(token, userId) {
+  try {
+    const res = await axios.get(
+      `${API_BASE}/users/${userId}/subscriptions`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res.data.data;
+  } catch (err) {
+    throw err.response?.data || {
+      message: "Failed to fetch user subscriptions",
+    };
+  }
+}
+
+export async function createUserSubscription(token, userId, payload) {
+  try {
+    const res = await axios.post(
+      `${API_BASE}/users/${userId}/subscriptions`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res.data.data;
+  } catch (err) {
+    throw err.response?.data || {
+      message: "Failed to create subscription",
+    };
+  }
+}
+
+
+
+
 
