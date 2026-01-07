@@ -1,13 +1,14 @@
 export default function UserHeader({ user }) {
+
   return (
     <div className="card mb-4">
       <div className="card-body d-flex justify-content-between align-items-start">
 
-        {/* LEFT */}
+   
         <div>
-          <h4 className="mb-1">
+          {/* <h4 className="mb-1">
             {user.firstName} {user.lastName}
-          </h4>
+          </h4> */}
 
           <div className="text-muted small">
             ID: {user.id}
@@ -20,7 +21,7 @@ export default function UserHeader({ user }) {
           )}
         </div>
 
-        {/* RIGHT */}
+ 
         <div className="d-flex gap-2 flex-wrap align-items-start">
           <span
             className={`badge ${

@@ -13,8 +13,8 @@ import SubscriptionPlanCard from "./sections/SubscriptionPlanCard";
 import SubscriptionPeriodCard from "./sections/SubscriptionPeriodCard";
 import SubscriptionActivity from "./sections/SubscriptionActivity";
 
-import ConfirmModal from "../../components/ConfirmModal";
-import Toast from "../../components/Toast";
+import ConfirmModal from "../../ components/ConfirmModal";
+import Toast from "../../ components/Toast";
 
 export default function SubscriptionDetailsPage() {
   const { subscriptionId } = useParams();
@@ -23,6 +23,7 @@ export default function SubscriptionDetailsPage() {
 
   const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [cancelOpen, setCancelOpen] = useState(false);
   const [canceling, setCanceling] = useState(false);
 
   const [toast, setToast] = useState({
@@ -33,9 +34,10 @@ export default function SubscriptionDetailsPage() {
 
   function showToast(message, type = "success") {
     setToast({ show: true, message, type });
-    setTimeout(() => {
-      setToast((t) => ({ ...t, show: false }));
-    }, 3000);
+    setTimeout(
+      () => setToast((t) => ({ ...t, show: false })),
+      3000
+    );
   }
 
   async function load() {
@@ -72,17 +74,20 @@ export default function SubscriptionDetailsPage() {
       showToast("Failed to cancel subscription", "error");
     } finally {
       setCanceling(false);
+      setCancelOpen(false);
     }
   }
+
+  console.log("subscription", subscription);
 
   if (loading) return <div className="p-4">Loading…</div>;
   if (!subscription) return null;
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid py-3">
       <SubscriptionHeader
         subscription={subscription}
-        onCancel={() => setCanceling(true)}
+        onCancel={() => setCancelOpen(true)}
       />
 
       <div className="row g-4 mt-1">
@@ -104,14 +109,14 @@ export default function SubscriptionDetailsPage() {
       </div>
 
       <ConfirmModal
-        show={canceling}
+        show={cancelOpen}
         title="Cancel subscription"
-        message="Cancel this subscription? This action affects user access."
+        message="Cancel this subscription? User access will be affected."
         confirmLabel="Cancel subscription"
         confirmVariant="danger"
         loading={canceling}
         onConfirm={cancelSubscription}
-        onCancel={() => setCanceling(false)}
+        onCancel={() => setCancelOpen(false)}
       />
 
       <Toast

@@ -37,7 +37,7 @@ export default function Sidebar() {
 
         <SidebarSection title="Management">
           <SidebarItem to="/dashboard/subscriptions" icon={<CreditCard />} label="Subscriptions" />
-          <SidebarItem to="/dashboard/subscription-plans" icon={<Diagram3 />} label="Plans" />
+          <SidebarItem  to="/dashboard/plans" icon={<Diagram3 />} label="Plans" />
         </SidebarSection>
 
         <SidebarSection title="Configuration">

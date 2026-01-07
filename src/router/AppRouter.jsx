@@ -14,6 +14,8 @@ import UsersPage from "../pages/users/UsersPage";
 import UserDetailsPage from "../pages/users/UserDetailsPage";
 import LanguagesPage from "../pages/languages/LanguagesPage";
 import SubscriptionsPage from "../pages/Subscriptions/SubscriptionsPage";
+import SubscriptionDetailsPage from "../pages/Subscriptions/SubscriptionDetailsPage";
+import PlansPage from "../pages/plans/PlansPage";
 
 export default function AppRouter() {
   return (
@@ -102,9 +104,20 @@ export default function AppRouter() {
           path="/dashboard/subscriptions" 
           element={<SubscriptionsPage />} />
 
+        <Route
+          path="/dashboard/subscriptions/:subscriptionId"
+          element={<SubscriptionDetailsPage />}
+        />
 
+        <Route
+          path="/dashboard/plans"
+          element={<PlansPage />}
+        />
 
+        
       </Routes>
+
+
     </BrowserRouter>
   );
 }

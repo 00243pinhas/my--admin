@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../auth/useAuth";
+import { useNavigate } from "react-router-dom";
 
 import {
   fetchAdminUserSubscriptions,
@@ -39,6 +40,7 @@ export default function SubscriptionsPage() {
 
   const [cancelTarget, setCancelTarget] = useState(null);
   const [canceling, setCanceling] = useState(false);
+  const navigate = useNavigate();
 
   const [toast, setToast] = useState({
     show: false,
@@ -305,10 +307,12 @@ export default function SubscriptionsPage() {
 
                       <td className="text-end">
                         <div className="d-flex justify-content-end gap-2 flex-wrap">
+                          
                           <button
                             className="btn btn-sm btn-outline-secondary"
-                            disabled
-                            title="Details page can be added later"
+                            onClick={() =>
+                              navigate(`/dashboard/subscriptions/${s.id}`)
+                            }
                           >
                             View
                           </button>
