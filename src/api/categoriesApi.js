@@ -50,3 +50,10 @@ export async function deleteRealEstateCategory(token, id) {
   return res.data.data;
 }
 
+export async function fetchRealEstateCategories(token) {
+  const res = await axios.get(
+    `${API_BASE}/real-estate/categories`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return res.data;
+}

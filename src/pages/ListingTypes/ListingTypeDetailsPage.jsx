@@ -9,6 +9,8 @@ import {
 import CategoriesTree from "../Categories/sections/CategoriesTree";
 import CategoryFormModal from "./sections/CategoryFormModal";
 import DeleteCategoryModal from "./sections/DeleteCategoryModal";
+import CategoriesTable from "./sections/CategoriesTable";
+
 
 export default function ListingTypeDetailsPage() {
   const { typeCode } = useParams();
@@ -20,6 +22,14 @@ export default function ListingTypeDetailsPage() {
 
   const [editingCategory, setEditingCategory] = useState(null);
   const [deletingCategory, setDeletingCategory] = useState(null);
+
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  function refreshAll() {
+    loadTree();
+    setRefreshKey((k) => k + 1);
+  }
+
 
   // v1: only real-estate supported (clean & explicit)
   const isRealEstate = typeCode === "real-estate";
@@ -103,18 +113,25 @@ export default function ListingTypeDetailsPage() {
         onDelete={setDeletingCategory}
       />
 
-      {/* MODALS */}
-      <CategoryFormModal
-        category={editingCategory}
-        onClose={() => setEditingCategory(null)}
-        onSaved={loadTree}
+      <CategoriesTable
+        refreshKey={refreshKey}
+        onEdit={setEditingCategory}
+        onDelete={setDeletingCategory}
       />
 
-      <DeleteCategoryModal
-        category={deletingCategory}
-        onClose={() => setDeletingCategory(null)}
-        onDeleted={loadTree}
-      />
+
+    <CategoryFormModal
+      category={editingCategory}
+      onClose={() => setEditingCategory(null)}
+      onSaved={refreshAll}
+    />
+
+    <DeleteCategoryModal
+      category={deletingCategory}
+      onClose={() => setDeletingCategory(null)}
+      onDeleted={refreshAll}
+    />
+
     </div>
   );
 }
