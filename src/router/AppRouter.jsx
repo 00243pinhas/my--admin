@@ -16,6 +16,15 @@ import LanguagesPage from "../pages/languages/LanguagesPage";
 import SubscriptionsPage from "../pages/Subscriptions/SubscriptionsPage";
 import SubscriptionDetailsPage from "../pages/Subscriptions/SubscriptionDetailsPage";
 import PlansPage from "../pages/plans/PlansPage";
+import RolesPage from "../pages/Roles/RolesPage";
+import ListingTypesPage from "../pages/ListingTypes/ListingTypesPage";
+import CategoriesPage from "../pages/Categories/CategoriesPage";
+
+import ListingTypeDetailsPage from "../pages/ListingTypes/ListingTypeDetailsPage";
+
+
+
+
 
 export default function AppRouter() {
   return (
@@ -114,6 +123,23 @@ export default function AppRouter() {
           element={<PlansPage />}
         />
 
+        <Route 
+        path="/dashboard/roles"
+         element={<RolesPage />} />
+
+        <Route
+         path="/dashboard/listing-types" 
+         element={<ListingTypesPage />} 
+         />
+        <Route
+        path="/dashboard/categories" 
+        element={<CategoriesPage 
+        />} />
+
+          <Route
+            path="/dashboard/listing-types/:typeCode"
+            element={<ListingTypeDetailsPage />}
+          />
         
       </Routes>
 

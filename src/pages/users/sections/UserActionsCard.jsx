@@ -122,15 +122,16 @@ async function setStatus(status) {
           <div>
             <label className="form-label small">Role</label>
 
-            <select
-                className="form-select"
-                value={user.role?.role || ""}
-                onChange={(e) => setRole(e.target.value)}
-              >
-                <option value="regular_user">Regular User</option>
-                <option value="moderator">Moderator</option>
-                <option value="admin">Admin</option>
-            </select>
+          <select
+            className="form-select"
+            value={user.role}
+            onChange={(e) => setRole(e.target.value)}
+          >
+            <option value="regular_user">Regular User</option>
+            <option value="moderator">Moderator</option>
+            <option value="admin">Admin</option>
+          </select>
+
 
             <div className="text-muted small mt-1">
               Changing role takes effect immediately.
