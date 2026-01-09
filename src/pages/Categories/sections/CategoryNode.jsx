@@ -6,11 +6,11 @@ export default function CategoryNode({ node, level }) {
           {node.name}
         </span>
 
-        {node.code && (
+        {node.parentId && (
           <span className="badge bg-light text-dark border">
-            {node.code}
+             {node.parentId} 
           </span>
-        )}
+        )} 
       </div>
 
       {Array.isArray(node.children) && node.children.length > 0 && (

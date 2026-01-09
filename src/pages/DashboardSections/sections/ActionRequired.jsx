@@ -1,4 +1,4 @@
-import { DASHBOARD_ROUTES } from "./Dashboard/dashboard.routes";
+import { DASHBOARD_ROUTES } from "../../Dashboard/dashboard.routes";
 
 import {
   HourglassSplit,

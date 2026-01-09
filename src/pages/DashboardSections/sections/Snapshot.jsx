@@ -8,13 +8,14 @@ import {
   CreditCard
 } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
-import { DASHBOARD_ROUTES } from "./Dashboard/dashboard.routes";
+import { DASHBOARD_ROUTES } from "../../Dashboard/dashboard.routes";
 
 export default function DashboardSnapshot({ data }) {
   const navigate = useNavigate();
 
   return (
     <section className="mb-4">
+      
       <div className="row g-4">
         <Stat
           label="Users"

@@ -1,16 +1,24 @@
 import Sidebar from "../Sidebar";
-
-import Dashboard from "../../pages/Dashboard";
+import "./DashboardLayout.css";
+import Dashboard from "../../pages/DashboardSections/Dashboard";
 
 export default function DashboardLayout() {
   return (
-    <div className="d-flex">
-    
-      <Sidebar />
-   
-      <main className="flex-grow-1 bg-light min-vh-100">
+
+
+    <body>
+      <div class="sidenav">
+        <Sidebar />
+      </div>
+
+      <div class="main p-4">
         <Dashboard />
-      </main>
-    </div>
+      </div>
+
+    </body>
+
   );
 }
+
+
+

@@ -24,8 +24,13 @@ export default function Sidebar() {
     <aside className="sidebar">
       {/* Brand */}
       <div className="sidebar-brand">
-        <span className="brand-dot" />
-        <span className="brand-text">Dilli Admin</span>
+          
+        <div className="mb-1">
+        <h1 className="h4 fw-semibold mb-1 p-2">Admin Dashboard</h1>
+        {/* <p className="text-muted mb-0">
+          System overview and operational control
+        </p> */}
+      </div> 
       </div>
 
       <div className="sidebar-inner">

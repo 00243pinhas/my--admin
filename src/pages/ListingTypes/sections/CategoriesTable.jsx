@@ -35,6 +35,7 @@ export default function CategoriesTable({
   }, [token, refreshKey]);
 
 
+  console.log(rows);
   if (loading) return <div className="p-3">Loading categories…</div>;
 
   return (
@@ -51,8 +52,8 @@ export default function CategoriesTable({
           <thead className="table-light">
             <tr>
               <th>Name</th>
-              <th>Parent</th>
-              <th>Created</th>
+              <th>Parent & child</th>
+              <th>parent id</th>
               <th className="text-end">Actions</th>
             </tr>
           </thead>
@@ -63,7 +64,7 @@ export default function CategoriesTable({
                 <td className="fw-medium">{c.name}</td>
 
                 <td className="text-muted small">
-                  {c.parentId || "—"}
+                  {c.parentId ? <span className="text-muted small">Child</span> : <span className="badge bg-dark">Parent</span>}
                 </td>
 
                 <td>
