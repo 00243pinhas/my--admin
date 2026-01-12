@@ -1,15 +1,31 @@
 export function countLastNDays(items, dateField, days = 7) {
   if (!Array.isArray(items)) return 0;
 
-  const now = new Date();
-  const from = new Date();
-  from.setDate(now.getDate() - days);
+  console.log("row", items); 
 
-  return items.filter((item) => {
-    const raw = item?.[dateField];
-    if (!raw) return false;
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
 
-    const date = new Date(raw);
-    return date >= from;
-  }).length;
+ const brag=items.reduce((count, item) => {
+
+    
+    const raw = item?.updatedAt;
+
+    if (!raw) return count;
+
+    const time = new Date(raw).getTime();
+
+
+    if (Number.isNaN(time)) return count;
+    
+    return time >= cutoff ? count + 1 : count;
+  }, 0);
+
+
+  return brag;
 }
+
+
+
+
+
+

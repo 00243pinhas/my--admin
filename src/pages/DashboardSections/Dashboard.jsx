@@ -4,8 +4,9 @@ import { useAuth } from "../../auth/useAuth";
 import { fetchAllUsers } from "../../api/usersApi";
 import { countLastNDays } from "../../outils/dateStats";
 import DashboardMomentum from "./sections/Momentum";
-
-
+import DashboardActivity from "./sections/RecentActivity";
+import { buildRecentActivity } from "../../outils/activity";
+import DashboardActions from "./sections/ActionRequired";
 import {
   fetchBasicDashboardStats,
   fetchActionRequired,
@@ -13,14 +14,19 @@ import {
 import { fetchAllListings } from "../../api/listingsApi";
 import { buildListingsStatusTimeline } from "../../outils/listingsStats";
 import ListingsStatusChart from "../../ components/ListingsStatusChart";
+import {fetchAdminUserSubscriptions} from "../../api/adminSubscriptionsApi"
+
+
+
 
 export default function Dashboard() {
   const { token } = useAuth();
   const navigate = useNavigate();
 
-  /* ===========================
-     STATE
-  =========================== */
+
+  const [rawData, setRawData] = useState(null);
+
+
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalListings: 0,
@@ -30,6 +36,8 @@ export default function Dashboard() {
     subscriptions: 0,
   });
 
+  
+
   const [actionRequired, setActionRequired] = useState({
     pending: 0,
     incomplete: 0,
@@ -38,100 +46,58 @@ export default function Dashboard() {
   const [listings, setListings] = useState([]);
   const [chartData, setChartData] = useState([]);
 
+  const [momentum, setMomentum] = useState({
+    newUsers7d: "—",
+    newListings7d: "—",
+    approvedListings7d: "—",
+    subscriptions7d: "—",
+  });
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  const [momentum, setMomentum] = useState({
-  users: "—",
-  listings: "—",
-  approved: "—",
-  subscriptions: "—",
-});
+  const [recentActivity, setRecentActivity] = useState([]);
 
 
-  /* ===========================
-     LOAD DASHBOARD DATA
-  =========================== */
-  useEffect(() => {
+useEffect(() => {
   if (!token) return;
 
-  async function loadDashboard() {
+  async function loadData() {
+    setLoading(true);
+    setError("");
+
     try {
-      setLoading(true);
-      setError("");
+      const [
+        basic,
+        ar,
+        listingsRes,
+        usersRes,
+        subscriptionsRes,
+      ] = await Promise.all([
+        fetchBasicDashboardStats(token),
+        fetchActionRequired(token),
+        fetchAllListings(token),
+        fetchAllUsers(token),
+        fetchAdminUserSubscriptions(token),
+      ]);
 
-      /* ===========================
-         BASIC STATS
-      =========================== */
-      const basic = await fetchBasicDashboardStats(token);
-      const ar = await fetchActionRequired(token);
+      const listingsArray = Array.isArray(listingsRes)
+        ? listingsRes
+        : listingsRes?.listings || [];
 
-      setStats({
-        totalUsers: basic.totalUsers,
-        totalListings: basic.totalListings,
-        activeListings: basic.totalListings - basic.pendingListings,
-        pendingListings: basic.pendingListings,
-        incompleteListings: ar.incompleteCount,
-        subscriptions: 0, // v1 placeholder (truthful)
-      });
-
-      setActionRequired({
-        pending: ar.pendingCount,
-        incomplete: ar.incompleteCount,
-      });
-
-      /* ===========================
-         LISTINGS (USED BY MULTIPLE SECTIONS)
-      =========================== */
-      const listingsResponse = await fetchAllListings(token);
-      const listingsArray = Array.isArray(listingsResponse)
-        ? listingsResponse
-        : listingsResponse?.listings || [];
-
-      setListings(listingsArray);
-
-      /* ===========================
-         SYSTEM HEALTH GRAPH
-      =========================== */
-      const timeline = buildListingsStatusTimeline(listingsArray, 14);
-      setChartData(timeline);
-
-      /* ===========================
-         USERS (FOR MOMENTUM)
-      =========================== */
-      const usersResponse = await fetchAllUsers(token);
-      const usersArray = Array.isArray(usersResponse)
-        ? usersResponse
+      const usersArray = Array.isArray(usersRes)
+        ? usersRes
         : [];
 
-      /* ===========================
-         PLATFORM MOMENTUM (7 DAYS)
-      =========================== */
-      const newUsers7d = countLastNDays(
-        usersArray,
-        "created_at",
-        7
-      );
+      const subscriptionsArray = Array.isArray(subscriptionsRes)
+        ? subscriptionsRes
+        : subscriptionsRes?.subscriptions || [];
 
-      const newListings7d = countLastNDays(
-        listingsArray,
-        "created_at",
-        7
-      );
-
-      const approvedListings7d = listingsArray.filter(
-        (l) =>
-          l.status === "active" &&
-          l.updated_at &&
-          new Date(l.updated_at) >=
-            new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-      ).length;
-
-      setMomentum({
-        newUsers7d,
-        newListings7d,
-        approvedListings7d,
-        subscriptions7d: null, // honest placeholder
+      setRawData({
+        basic,
+        ar,
+        listings: listingsArray,
+        users: usersArray,
+        subscriptions: subscriptionsArray,
       });
 
     } catch (err) {
@@ -142,24 +108,90 @@ export default function Dashboard() {
     }
   }
 
-  loadDashboard();
+  loadData();
 }, [token]);
 
 
+  console.log(listings);
+
+  useEffect(() => {
+  if (!rawData) return;
+
+  const { basic, ar, listings, users, subscriptions } = rawData;
 
   /* ===========================
-     STATES
+     SNAPSHOT STATS
   =========================== */
+  setStats({
+    totalUsers: basic.totalUsers ?? 0,
+    totalListings: basic.totalListings ?? 0,
+    pendingListings: basic.pendingListings ?? 0,
+    rejectedListings: basic.rejectedListings ?? 0,
+    incompleteListings: ar.incompleteCount ?? 0,
+    subscriptions: subscriptions.length ?? 0,
+  });
+
+  setActionRequired({
+    pending: ar.pendingCount,
+    incomplete: ar.incompleteCount,
+  });
+
+  setListings(listings);
+
+  setChartData(
+    buildListingsStatusTimeline(listings, 14)
+  );
+
+  console.log("subscriptions",subscriptions)
+
+setRecentActivity(
+  buildRecentActivity({
+    listings,
+    users,
+    subscriptions,
+    hours: 24,
+    limit: 8,
+  })
+);
+
+
+
+  /* ===========================
+     PLATFORM MOMENTUM (7 DAYS)
+  =========================== */
+  const cutoff = Date.now() - 7 * 86400000;
+
+  const approvedListings7d = listings.filter((l) => {
+    if (l.status !== "active") return false;
+    if (!l.updatedAt) return false;
+
+    const time = new Date(l.updatedAt).getTime();
+    return !Number.isNaN(time) && time >= cutoff;
+  }).length;
+
+  setMomentum({
+    newUsers7d: countLastNDays(users, "createdAt", 7),
+    newListings7d: countLastNDays(listings, "createdAt", 7),
+    approvedListings7d,
+    subscriptions7d: countLastNDays(
+      subscriptions,
+      "createdAt",
+      7
+    ),
+  });
+}, [rawData]);
+
+
+
+  // console.log("recentActivity", recentActivity);
+
   if (loading) return <div className="p-4">Loading dashboard…</div>;
   if (error) return <div className="p-4 text-danger">{error}</div>;
 
-  /* ===========================
-     RENDER
-  =========================== */
+
   return (
     <div className="container-fluid">
 
-      {/* SNAPSHOT CARDS */}
       <div className="row g-3 mb-4">
         <StatCard label="Users" value={stats.totalUsers}
           onClick={() => navigate("/dashboard/users")} />
@@ -180,57 +212,35 @@ export default function Dashboard() {
         <StatCard label="Subscriptions" value={stats.subscriptions} />
       </div>
 
-      {/* ACTION REQUIRED */}
+ 
       <div className="card border-0 shadow-sm mb-4">
         <div className="card-body">
-          <h6 className="fw-semibold mb-3">⚠️ Action Requireddd</h6>
 
-          {actionRequired.pending === 0 &&
-          actionRequired.incomplete === 0 ? (
-            <div className="text-center text-muted py-4">
-              <div className="fs-4 mb-2">✔</div>
-              <div>All clear</div>
-              <small>No actions are required at the moment.</small>
-            </div>
-          ) : (
-            <ul className="list-group list-group-flush">
-              {actionRequired.pending > 0 && (
-                <li className="list-group-item d-flex justify-content-between clickable"
-                  onClick={() => navigate("/dashboard/listings?status=pending")}>
-                  Pending listings
-                  <span className="badge bg-warning text-dark">
-                    {actionRequired.pending}
-                  </span>
-                </li>
-              )}
+          <DashboardActions
+            data={{
+              pendingListings: actionRequired.pending,
+              incompleteListings: actionRequired.incomplete,
+              expiredSubscriptions: 0, 
+              flaggedUsers: 0,        
+            }}
+          />
 
-              {actionRequired.incomplete > 0 && (
-                <li className="list-group-item d-flex justify-content-between clickable"
-                  onClick={() => navigate("/dashboard/listings?incomplete=true")}>
-                  Incomplete listings
-                  <span className="badge bg-danger">
-                    {actionRequired.incomplete}
-                  </span>
-                </li>
-              )}
-            </ul>
-          )}
         </div>
       </div>
 
       {/* PLATFORM MOMENTUM (v1 placeholder) */}
       <DashboardMomentum data={momentum} />
 
+      {/* RECENT ACTIVITY (future-ready) */}
 
       {/* SYSTEM HEALTH GRAPH */}
       <div className="mb-4">
         <ListingsStatusChart data={chartData} />
       </div>
 
-      {/* RECENT ACTIVITY (future-ready) */}
       <div className="card border-0 shadow-sm">
         <div className="card-body text-muted small">
-          Recent activity will appear here.
+          <DashboardActivity items={recentActivity} />
         </div>
       </div>
 
@@ -265,15 +275,15 @@ function StatCard({ label, value, onClick, highlight }) {
   );
 }
 
-function MomentumCard({ label, value }) {
-  return (
-    <div className="col-6 col-md-3">
-      <div className="card border-0 shadow-sm">
-        <div className="card-body text-center">
-          <div className="fw-semibold">{value}</div>
-          <div className="small text-muted">{label}</div>
-        </div>
-      </div>
-    </div>
-  );
-}
+// function MomentumCard({ label, value }) {
+//   return (
+//     <div className="col-6 col-md-3">
+//       <div className="card border-0 shadow-sm">
+//         <div className="card-body text-center">
+//           <div className="fw-semibold">{value}</div>
+//           <div className="small text-muted">{label}</div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }

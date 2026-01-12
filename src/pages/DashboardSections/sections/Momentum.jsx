@@ -8,7 +8,8 @@ import {
 
 export default function DashboardMomentum({ data }) {
 
-  console.log(data);
+  // console.log(data);
+
   return (
     <section className="mb-4">
       <h5 className="fw-semibold mb-3">Platform Momentum (7 days)</h5>

@@ -67,3 +67,8 @@
 .dashboard-action-item:hover {
   background-color: rgba(13, 110, 253, 0.04);
 }
+
+/* dashboard.css */
+.action-required-card {
+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.08);
+}

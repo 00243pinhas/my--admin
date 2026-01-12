@@ -7,11 +7,12 @@ export default function DashboardLayout() {
 
 
     <body>
-      <div class="sidenav">
+      
+      <div className="sidenav">
         <Sidebar />
       </div>
 
-      <div class="main p-4">
+      <div className="main p-4">
         <Dashboard />
       </div>
 

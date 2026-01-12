@@ -1,69 +1,67 @@
 import { DASHBOARD_ROUTES } from "../../Dashboard/dashboard.routes";
-
 import {
   HourglassSplit,
   ExclamationTriangle,
-  CreditCard,
-  ShieldExclamation,
   CheckCircle,
 } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
-
 
 export default function DashboardActions({ data }) {
   const navigate = useNavigate();
 
   const hasActions =
-    data.pendingListings ||
-    data.incompleteListings ||
-    data.expiredSubscriptions ||
-    data.flaggedUsers;
+    data.pendingListings > 0 ||
+    data.incompleteListings > 0;
 
   return (
     <section className="mb-4">
-      <div className="card border-0 shadow-sm">
+      <div
+        className="card border-0 shadow action-required-card"
+        style={{ borderLeft: "4px solid #dc3545" }}
+      >
         <div className="card-body">
-          {/* Header */}
-          <div className="d-flex align-items-center mb-3">
-            <div className="me-2 text-warning">
-              <HourglassSplit size={20} />
+          {/* HEADER */}
+          <div className="d-flex align-items-start justify-content-between mb-3">
+            <div>
+              <h5 className="fw-semibold mb-0">
+                ⚠️ Action Required 
+              </h5>
+              <small className="text-muted">
+                Immediate admin attention needed
+              </small>
             </div>
-            <h5 className="mb-0 fw-semibold">Action Required</h5>
           </div>
 
-          {/* Content */}
+          {/* CONTENT */}
           {!hasActions ? (
             <AllClear />
           ) : (
             <div className="list-group list-group-flush">
-              <ActionItem
-                icon={<HourglassSplit />}
-                label="Listings pending approval"
-                value={data.pendingListings}
-                onClick={() => navigate(DASHBOARD_ROUTES.pendingListings)}
-              />
 
-              <ActionItem
-                icon={<ExclamationTriangle />}
-                label="Incomplete listings"
-                value={data.incompleteListings}
-                variant="warning"
-                onClick={() => navigate(DASHBOARD_ROUTES.incompleteListings)}
-              />
+              {data.incompleteListings > 0 && (
+                <ActionItem
+                  icon={<ExclamationTriangle />}
+                  label="Incomplete listings"
+                  value={data.incompleteListings}
+                  variant="danger"
+                  onClick={() =>
+                    navigate(DASHBOARD_ROUTES.incompleteListings)
+                  }
+                />
+              )}
 
-              <ActionItem
-                icon={<CreditCard />}
-                label="Expired subscriptions"
-                value={data.expiredSubscriptions}
-                onClick={() => navigate(DASHBOARD_ROUTES.subscriptions)}
-              />
+              {data.pendingListings > 0 && (
+                <ActionItem
+                  icon={<HourglassSplit />}
+                  label="Listings pending approval"
+                  value={data.pendingListings}
+                  variant="warning"
+                  onClick={() =>
+                    navigate(DASHBOARD_ROUTES.pendingListings)
+                  }
+                />
+              )}
 
-              <ActionItem
-                icon={<ShieldExclamation />}
-                label="Flagged users"
-                value={data.flaggedUsers}
-                onClick={() => navigate(DASHBOARD_ROUTES.flaggedUsers)}
-              />
             </div>
           )}
         </div>
@@ -72,30 +70,48 @@ export default function DashboardActions({ data }) {
   );
 }
 
+
 /* ============================= */
 /* ACTION ITEM */
 /* ============================= */
 
 function ActionItem({ icon, label, value, variant, onClick }) {
+  const color =
+    variant === "danger"
+      ? "text-danger"
+      : variant === "warning"
+      ? "text-warning"
+      : "text-muted";
+
+  const badge =
+    variant === "danger"
+      ? "bg-danger"
+      : variant === "warning"
+      ? "bg-warning text-dark"
+      : "bg-secondary";
+
   return (
     <div
-      className={`list-group-item d-flex justify-content-between align-items-center ${
-        variant === "warning" ? "list-group-item-warning" : ""
-      }`}
+      className="list-group-item d-flex justify-content-between align-items-center clickable py-3"
       role="button"
       onClick={onClick}
     >
-      <div className="d-flex align-items-center gap-2">
-        <span className="text-muted">{icon}</span>
-        <span>{label}</span>
+      <div className="d-flex align-items-center gap-3">
+        <span className={`${color}`} style={{ fontSize: 18 }}>
+          {icon}
+        </span>
+        <span className="fw-medium">
+          {label}
+        </span>
       </div>
 
-      <span className="badge bg-secondary rounded-pill">
-        {value ?? "—"}
+      <span className={`badge ${badge} fs-6`}>
+        {value}
       </span>
     </div>
   );
 }
+
 
 /* ============================= */
 /* EMPTY STATE */
@@ -103,14 +119,17 @@ function ActionItem({ icon, label, value, variant, onClick }) {
 
 function AllClear() {
   return (
-    <div className="text-center py-4 text-muted">
+    <div className="text-center py-4">
       <div className="mb-2 text-success">
-        <CheckCircle size={28} />
+        <CheckCircle size={32} />
       </div>
-      <div className="fw-medium">All clear</div>
-      <div className="small">
-        No actions are required at the moment.
+      <div className="fw-semibold">
+        All clear
+      </div>
+      <div className="small text-muted">
+        No admin action required at this time.
       </div>
     </div>
   );
 }
+
