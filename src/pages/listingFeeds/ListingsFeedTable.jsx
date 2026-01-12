@@ -11,7 +11,7 @@ export default function ListingsFeedTable({
   onDelete,
 }) {
   return (
-    <div className="card border-0 shadow-sm">
+    <div className="card border-0 shadow-sm p-4">
       <div className="table-responsive">
       <table className="table align-middle mb-0 listings-feed-table">
           <thead className="table-light">

@@ -165,7 +165,7 @@ export default function SubscriptionsPage() {
   }
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid p-4">
       {/* HEADER */}
       <div className="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
         <div>

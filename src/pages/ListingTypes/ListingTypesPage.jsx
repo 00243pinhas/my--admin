@@ -27,7 +27,7 @@ export default function ListingTypesPage() {
   }, [token]);
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid p-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h4>Listing Types</h4>
         <span className="badge bg-secondary">System-defined</span>

@@ -19,8 +19,8 @@ import PlansPage from "../pages/plans/PlansPage";
 import RolesPage from "../pages/Roles/RolesPage";
 import ListingTypesPage from "../pages/ListingTypes/ListingTypesPage";
 import CategoriesPage from "../pages/Categories/CategoriesPage";
-
 import ListingTypeDetailsPage from "../pages/ListingTypes/ListingTypeDetailsPage";
+import SeedUserPage from "../pages/users/SeedUser/SeedUserPage.jsx";
 
 
 
@@ -140,6 +140,12 @@ export default function AppRouter() {
             path="/dashboard/listing-types/:typeCode"
             element={<ListingTypeDetailsPage />}
           />
+
+          <Route
+            path="/dashboard/users/seed"
+            element={<SeedUserPage />}
+          />
+
         
       </Routes>
 

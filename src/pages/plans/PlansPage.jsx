@@ -39,7 +39,7 @@ export default function PlansPage() {
   }, [token]);
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid p-4">
       <div className="mb-3">
         <h4 className="mb-0">Subscription Plans</h4>
         <div className="text-muted small">

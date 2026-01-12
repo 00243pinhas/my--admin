@@ -37,7 +37,7 @@ export default function LanguagesPage() {
   console.log(languages);
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid p-4">
       <div className="mb-4">
         <h3>Languages</h3>
         <p className="text-muted small">

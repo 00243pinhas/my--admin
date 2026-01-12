@@ -147,5 +147,18 @@ export async function fetchUserFavorites(token, userId) {
   }
 }
 
+export async function seedUser(token, payload) {
+  const res = await axios.post(
+    `${API_BASE}/users/admin/seed`,
+    payload,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data.data;
+}
 
 

@@ -13,6 +13,7 @@ import {
   Folder,
   Gear,
   BoxArrowRight,
+  PersonPlus
 } from "react-bootstrap-icons";
 
 
@@ -47,6 +48,7 @@ export default function Sidebar() {
 
         <SidebarSection title="Configuration">
           <SidebarItem to="/dashboard/listing-types" icon={<Layers />} label="Listing Types" />
+          <SidebarItem to="/dashboard/users/seed" icon={<PersonPlus />} label="Seed-User" />
           <SidebarItem to="/dashboard/categories" icon={<Diagram2 />} label="Categories" />
           <SidebarItem to="/dashboard/languages" icon={<Translate />} label="Languages" />
           <SidebarItem to="/dashboard/roles" icon={<ShieldLock />} label="Roles" />

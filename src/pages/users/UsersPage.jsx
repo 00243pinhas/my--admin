@@ -81,13 +81,22 @@ export default function UsersPage() {
   }
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid p-4">
 
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h4 className="mb-0">Users</h4>
         <span className="text-muted small">
           Total: {users.length}
         </span>
+
+          <div className="d-flex gap-2">
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate("/dashboard/users/seed")}
+          >
+          Seed User
+          </button>
+        </div>
       </div>
 
       <UsersFilters value={filters} onChange={setFilters} />

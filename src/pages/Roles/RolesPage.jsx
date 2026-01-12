@@ -27,7 +27,7 @@ export default function RolesPage() {
   }, [token]);
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid p-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h4 className="mb-0">Roles</h4>
         <span className="badge bg-secondary">

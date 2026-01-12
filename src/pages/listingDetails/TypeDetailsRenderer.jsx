@@ -19,7 +19,7 @@ export default function TypeDetailsRenderer({ listing }) {
   const type = listing?.listingType;
 
   return (
-    <div className="card">
+    <div className="card p-4">
       <div className="card-header d-flex justify-content-between align-items-center">
         <h6 className="mb-0">Type-Specific Details</h6>
         <span className="badge bg-light text-dark">

@@ -73,7 +73,7 @@ export default function ListingsPage() {
   if (error) return <div>{error}</div>;
 
   return (
-    <div style={{ padding: "2rem" }}>
+    <div style={{ padding: "2rem" }} className="p-4">
       <h1>Listings moderation</h1>
 
       <div style={{ margin: "1rem 0" }}>

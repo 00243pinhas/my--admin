@@ -198,7 +198,7 @@ export default function ListingsFeed() {
 
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid p-4">
       <ListingsFeedHeader />
 
       <ListingsFeedFilters

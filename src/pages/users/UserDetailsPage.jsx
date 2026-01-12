@@ -60,7 +60,7 @@ export default function UserDetailsPage() {
   if (!user) return <div className="p-4 text-danger">User not found</div>;
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid p-4">
       <h4 className="mb-3">User Details</h4>
       <UserHeader user={user} />
       {/* <UserProfileCard user={user} /> */}

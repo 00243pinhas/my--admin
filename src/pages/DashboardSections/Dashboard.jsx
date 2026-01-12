@@ -190,7 +190,7 @@ setRecentActivity(
 
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid p-4">
 
       <div className="row g-3 mb-4">
         <StatCard label="Users" value={stats.totalUsers}

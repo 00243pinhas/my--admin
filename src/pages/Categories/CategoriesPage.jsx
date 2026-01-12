@@ -36,7 +36,7 @@ export default function CategoriesPage() {
   }, [token]);
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid p-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h4>Categories</h4>
       </div>
