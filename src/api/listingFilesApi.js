@@ -1,7 +1,7 @@
-
 import axios from "axios";
 import { API_BASE } from "./config";
 
+/* ===================== FILES ===================== */
 
 export async function fetchListingFiles(token, listingId) {
   try {
@@ -16,19 +16,46 @@ export async function fetchListingFiles(token, listingId) {
 
     return res.data.data;
   } catch (err) {
-    throw (
-      err.response?.data || { message: "Failed to fetch listing files" }
-    );
+    throw err.response?.data || {
+      message: "Failed to fetch listing files",
+    };
   }
 }
 
+export async function uploadListingFiles(token, listingId, files) {
+  const formData = new FormData();
+  files.forEach((file) => formData.append("files", file));
 
+  try {
+    const res = await axios.post(
+      `${API_BASE}/listings/${listingId}/upload-files`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
 
-export async function updateListingFile(token, listingId, fileId, updateData) {
+    return res.data.data;
+  } catch (err) {
+    throw err.response?.data || {
+      message: "Failed to upload files",
+    };
+  }
+}
+
+export async function updateListingFile(
+  token,
+  listingId,
+  file_id,
+  payload
+) {
   try {
     const res = await axios.patch(
-      `${API_BASE}/listings/${listingId}/files/${fileId}`,
-      updateData,
+      `${API_BASE}/listings/${listingId}/files/${file_id}`,
+      payload,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -38,18 +65,16 @@ export async function updateListingFile(token, listingId, fileId, updateData) {
 
     return res.data.data;
   } catch (err) {
-    throw (
-      err.response?.data || { message: "Failed to update listing file" }
-    );
+    throw err.response?.data || {
+      message: "Failed to update file",
+    };
   }
 }
 
-
-
-export async function deleteListingFile(token, listingId, fileId) {
+export async function deleteListingFile(token, listingId, file_id) {
   try {
     const res = await axios.delete(
-      `${API_BASE}/listings/${listingId}/files/${fileId}`,
+      `${API_BASE}/listings/${listingId}/files/${file_id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -59,8 +84,8 @@ export async function deleteListingFile(token, listingId, fileId) {
 
     return res.data.data;
   } catch (err) {
-    throw (
-      err.response?.data || { message: "Failed to delete listing file" }
-    );
+    throw err.response?.data || {
+      message: "Failed to delete file",
+    };
   }
 }

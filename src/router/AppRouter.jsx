@@ -21,6 +21,7 @@ import ListingTypesPage from "../pages/ListingTypes/ListingTypesPage";
 import CategoriesPage from "../pages/Categories/CategoriesPage";
 import ListingTypeDetailsPage from "../pages/ListingTypes/ListingTypeDetailsPage";
 import SeedUserPage from "../pages/users/SeedUser/SeedUserPage.jsx";
+import SettingsPage from "../pages/Settings/SettingsPage.jsx";
 
 
 
@@ -144,6 +145,11 @@ export default function AppRouter() {
           <Route
             path="/dashboard/users/seed"
             element={<SeedUserPage />}
+          />
+
+            <Route
+            path="dashboard/settings"
+            element={<SettingsPage />}
           />
 
         

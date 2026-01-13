@@ -12,7 +12,7 @@ import ListingHeader from "./ListingHeader";
 import BaseListingCard from "./BaseListingCard";
 import ListingTypeCard from "./ListingTypeCard";
 import TypeDetailsRenderer from "./TypeDetailsRenderer";
-import ListingFilesCard from "./ListingFilesCard";
+import ListingFilesCard from "./filesection/ListingFilesCard";
 import OwnerInfoCard from "./OwnerInfoCard";
 import ActivityTimeline from "./ActivityTimeline";
 
