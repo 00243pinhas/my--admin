@@ -3,7 +3,7 @@ export default function ListingHeader({
   loading,
   onApprove,
   onReject,
-  onArchive,
+
   onDelete,
 }) {
   function badge(status) {
@@ -60,13 +60,13 @@ export default function ListingHeader({
             Reject
           </button>
 
-          <button
+          {/* <button
             className="btn btn-outline-secondary btn-sm"
             disabled={loading || listing.status === "archived"}
             onClick={onArchive}
           >
             Archive
-          </button>
+          </button> */}
 
           <button
             className="btn btn-danger btn-sm"

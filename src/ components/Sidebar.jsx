@@ -15,12 +15,16 @@ import {
   BoxArrowRight,
   PersonPlus
 } from "react-bootstrap-icons";
+import { useAuth } from "../auth/useAuth";
 
 
 import "./sidebar.css";
 
 
 export default function Sidebar() {
+
+  const {logout} = useAuth();
+
   return (
     <aside className="sidebar">
       {/* Brand */}
@@ -57,7 +61,11 @@ export default function Sidebar() {
         <SidebarSection title="System">
           <SidebarItem to="/dashboard/files" icon={<Folder />} label="Files" />
           <SidebarItem to="/dashboard/settings" icon={<Gear />} label="Settings" />
-          <SidebarItem to="/logout" icon={<BoxArrowRight />} label="Logout" />
+          <SidebarAction
+            icon={<BoxArrowRight />}
+            label="Logout"
+            onClick={logout}
+/>
         </SidebarSection>
       </div>
     </aside>
@@ -88,3 +96,19 @@ function SidebarItem({ to, icon, label }) {
     </NavLink>
   );
 }
+
+
+
+function SidebarAction({ icon, label, onClick }) {
+  return (
+    <button
+      type="button"
+      className="sidebar-item sidebar-action"
+      onClick={onClick}
+    >
+      <span className="sidebar-icon">{icon}</span>
+      <span className="sidebar-label">{label}</span>
+    </button>
+  );
+}
+

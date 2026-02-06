@@ -1,39 +1,67 @@
 import { useState } from "react";
 import { AuthContext } from "./AuthContext";
 import { sendOtp, verifyOtp, logoutRequest } from "../api/authApi";
+import api from "../api/axios";
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [token, setToken] = useState(
+    localStorage.getItem("accessToken")
+  );
   const [loading, setLoading] = useState(false);
   const [otpPhone, setOtpPhone] = useState(null);
 
   async function requestOtp(phoneNumber) {
-    if (!phoneNumber) throw new Error("Phone number required");
+    if (!phoneNumber) {
+      throw new Error("Phone number required");
+    }
+
     setLoading(true);
-    await sendOtp(phoneNumber);
-    setOtpPhone(phoneNumber);
-    setLoading(false);
+    try {
+      await sendOtp(phoneNumber);
+      setOtpPhone(phoneNumber);
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function confirmOtp(code) {
-    if (!otpPhone) throw new Error("Restart login");
+    if (!otpPhone) {
+      throw new Error("Restart login");
+    }
 
     setLoading(true);
-    const data = await verifyOtp(otpPhone, code);
-    setLoading(false);
+    try {
+      const data = await verifyOtp(otpPhone, code);
 
-    if (!data?.accessToken) throw new Error("Invalid OTP");
+      if (!data?.accessToken) {
+        throw new Error("Invalid OTP");
+      }
 
-    localStorage.setItem("token", data.accessToken);
-    setToken(data.accessToken);
+      localStorage.setItem(
+        "accessToken",
+        data.accessToken
+      );
+      setToken(data.accessToken);
 
-    return data.context;
+      api.defaults.headers.Authorization =
+        `Bearer ${data.accessToken}`;
+
+      return data.context;
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function logout() {
-    if (token) await logoutRequest(token);
-    localStorage.clear();
-    setToken(null);
+    try {
+      await logoutRequest(); // backend invalidates refresh token
+    } catch (e) {
+      // ignore errors
+    } finally {
+      localStorage.removeItem("accessToken");
+      setToken(null);
+      delete api.defaults.headers.Authorization;
+    }
   }
 
   return (

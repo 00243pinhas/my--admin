@@ -1,4 +1,8 @@
+import { useNavigate } from "react-router-dom";
 export default function OwnerInfoCard({ owner }) {
+
+  const navigate = useNavigate();
+
   if (!owner) {
     return (
       <div className="card">
@@ -23,18 +27,21 @@ export default function OwnerInfoCard({ owner }) {
           <div className="text-muted small">{owner.title}</div>
           <span className="mt-1">
             {owner.id || "active"}
+
           </span>
         </div>
 
         <div className="d-flex gap-2">
-          <button className="btn btn-outline-primary btn-sm">
+          <button 
+          onClick={() => navigate(`/dashboard/users/${owner.id}`)}
+          className="btn btn-outline-primary btn-sm">
             View Profile
-          </button>
-          <button className="btn btn-outline-secondary btn-sm">
-            View Listings
           </button>
         </div>
       </div>
     </div>
   );
 }
+
+
+        

@@ -1,22 +1,9 @@
-// function isPrimitive(v) {
-//   return v === null || ["string", "number", "boolean"].includes(typeof v);
-// }
 
-// function formatKey(key) {
-//   return String(key)
-//     .replace(/_/g, " ")
-//     .replace(/([a-z])([A-Z])/g, "$1 $2")
-//     .replace(/\b\w/g, (c) => c.toUpperCase());
-// }
-
-// function renderValue(value) {
-//   if (isPrimitive(value)) return String(value ?? "—");
-//   if (Array.isArray(value)) return value.length ? value.join(", ") : "—";
-//   return "[object]";
-// }
 
 export default function TypeDetailsRenderer({ listing }) {
   const type = listing?.listingType;
+
+  console.log("Rendering Type Details for:", type);
 
   return (
     <div className="card p-4">

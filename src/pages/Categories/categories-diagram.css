@@ -1,0 +1,17 @@
+.categories-diagram-canvas {
+  height: 900px;
+  width: 100%;
+}
+
+.cat-node {
+  min-width: 260px;
+  border-radius: 12px;
+}
+
+.react-flow__node {
+  cursor: grab;
+}
+
+.react-flow__node:active {
+  cursor: grabbing;
+}

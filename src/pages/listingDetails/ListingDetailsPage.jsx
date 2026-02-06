@@ -116,7 +116,7 @@ export default function ListingDetailsPage() {
       setActionLoading("delete");
       await deleteListing(deleteTarget.id, token);
       showToast("Listing deleted successfully");
-      navigate("/dashboard/listings");
+      navigate("/dashboard");
     } catch (err) {
       console.error(err);
       showToast("Failed to delete listing", "error");

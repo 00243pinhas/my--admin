@@ -1,5 +1,6 @@
 export default function ListingTypeCard({ listing }) {
   const type = listing.listingType;
+  console.log("Listing Type:", type);
 
   return (
     <div className="card">
@@ -10,8 +11,7 @@ export default function ListingTypeCard({ listing }) {
       <div className="card-body">
         <div className="text-muted">
           {type?.name || "Unknown"}
-          {type?.category && ` → ${type.category}`}
-          {type?.subType && ` → ${type.subType}`}
+          {type?.name && ` → ${type.name}`}
         </div>
       </div>
     </div>
